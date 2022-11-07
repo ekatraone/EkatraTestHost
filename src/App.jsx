@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import "./App.css";
-import MainSection from "./components/MainSection";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import Cohorts from "./Pages/Cohorts";
+import Courses from "./Pages/Courses";
 import Home from "./Pages/Home";
 
 function App() {
@@ -11,7 +12,12 @@ function App() {
       <Sidebar />
       <Section>
         <Navbar />
-        <Home />
+
+        {/* Pages */}
+
+        {/* <Home /> */}
+        {/* <Courses /> */}
+        <Cohorts />
       </Section>
     </Container>
   );
