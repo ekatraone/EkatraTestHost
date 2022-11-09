@@ -62,7 +62,7 @@ const Courses = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.main`
   padding: 0.5rem;
   background: rgb(115, 216, 206);
   background: linear-gradient(
