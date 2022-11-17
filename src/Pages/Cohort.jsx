@@ -3,13 +3,15 @@ import styled from "styled-components";
 import Button from "../components/Button";
 import Table from "../components/Table";
 
-const AddCohort = () => {
+const Cohort = () => {
+
 
   const columns = [
-    { field: "name", headerName: "Name", minWidth: 300, maxWidth: 350 },
+    { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
 
-    { field: "number", headerName: "Contact Number", minWidth: 300, maxWidth: 350 },
-    { field: "channel", headerName: "Channel", minWidth: 300, maxWidth: 350 },
+    { field: "number", headerName: "Contact Number", minWidth: 200, maxWidth: 350 },
+    { field: "status", headerName: "Status", minWidth: 250, maxWidth: 350 },
+    { field: "channel", headerName: "Channel", minWidth: 250, maxWidth: 350 },
     { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
 
@@ -92,9 +94,9 @@ const AddCohort = () => {
   return (
     <Container>
       <Wrapper>
-        <Title>Add Cohort</Title>
+        <Title>{"Jan-to-Feb "} {"Batch 1"}</Title>
         <Table 
-          isHavingTwoButtons
+          isHavingOneButton
           columns={columns}
           rows = {rows}
         />
@@ -144,4 +146,4 @@ const ButtonContainer = styled.div`
     margin:0.6rem 1.3rem;
 `;
 
-export default AddCohort;
+export default Cohort;

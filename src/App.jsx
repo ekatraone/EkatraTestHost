@@ -3,6 +3,8 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import AddCohort from "./Pages/AddCohort";
+import AddCourse from "./Pages/AddCourse";
+import Cohort from "./Pages/Cohort";
 import Cohorts from "./Pages/Cohorts";
 import Courses from "./Pages/Courses";
 import Home from "./Pages/Home";
@@ -19,7 +21,9 @@ function App() {
         {/* <Home /> */}
         {/* <Courses /> */}
         {/* <Cohorts /> */}
-        <AddCohort />
+        {/* <AddCohort /> */}
+        {/* <Cohort /> */}
+        <AddCourse />
       </Section>
     </Container>
   );
