@@ -1,7 +1,14 @@
+import {
+  AddCircleOutlineOutlined,
+  KeyboardArrowLeftSharp,
+  KeyboardArrowRightSharp,
+  UploadOutlined,
+} from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import styled from "styled-components";
+import Button from "../components/Button";
 
 const AddCourse = () => {
   const [filters, setFilter] = useState({});
@@ -25,66 +32,121 @@ const AddCourse = () => {
       <Wrapper>
         <Title>New Course</Title>
         <Form noValidate autoComplete="off">
-          <LeftContainer>
-            <TextField
-              label="Course Name"
-              variant="outlined"
-              required
-              // color="primary"
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Brief Description"
-              variant="outlined"
-              required
-              color="primary"
-              fullWidth
-              multiline
-              rows={4}
-            />
-          </LeftContainer>
-          <RightContainer>
-            <TextField
-              label="Course Instructor Name"
-              required
-              color="primary"
-              fullWidth
-              margin="normal"
-            />
-            <FilterContainer>
-              <Filter>
-                <SingleFilterContainer>
-                  <FilterText>Category</FilterText>
-                  {/* <Select name="color" onChange={handleFilters}> */}
-                  <Select name="category" onChange={handleFilters} required>
-                    <Option disabled selected>
-                      Select Category
-                    </Option>
-                    <Option>Programming</Option>
-                    <Option>WildLife</Option>
-                    <Option>green</Option>
-                  </Select>
-                </SingleFilterContainer>
+          <TopContainer>
+            <LeftContainer>
+              <TextField
+                label="Course Name"
+                variant="outlined"
+                required
+                // color="primary"
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Brief Description"
+                variant="outlined"
+                required
+                color="primary"
+                fullWidth
+                multiline
+                rows={4}
+              />
+            </LeftContainer>
+            <RightContainer>
+              <TextField
+                label="Course Instructor Name"
+                required
+                color="primary"
+                fullWidth
+                margin="normal"
+              />
+              <FilterContainer>
+                <Filter>
+                  <SingleFilterContainer>
+                    <FilterText>Category</FilterText>
 
-                <SingleFilterContainer>
-                  <FilterText>Language</FilterText>
-                  <Select name="language" onChange={handleFilters} required>
-                    <Option disabled selected>
-                      Language
-                    </Option>
-                    <Option>Hindi</Option>
-                    <Option>English</Option>
-                    <Option>Marathi</Option>
-                  </Select>
-                </SingleFilterContainer>
+                    <Select name="category" onChange={handleFilters} required>
+                      <Option disabled selected>
+                        Select Category
+                      </Option>
+                      <Option>Programming</Option>
+                      <Option>WildLife</Option>
+                      <Option>green</Option>
+                    </Select>
+                  </SingleFilterContainer>
 
-                {/* <Select name="size" onChange={handleFilters}> */}
-              </Filter>
-            </FilterContainer>
-          </RightContainer>
+                  <SingleFilterContainer>
+                    <FilterText>Language</FilterText>
+                    <Select name="language" onChange={handleFilters} required>
+                      <Option disabled selected>
+                        Language
+                      </Option>
+                      <Option>Hindi</Option>
+                      <Option>English</Option>
+                      <Option>Marathi</Option>
+                    </Select>
+                  </SingleFilterContainer>
+                </Filter>
+              </FilterContainer>
+            </RightContainer>
+          </TopContainer>
+          <BottomContainer>
+            <Carousel>
+              <KeyboardArrowLeftSharp />
+              <CarouselDayContainer>
+                <CarouselDay>Day 1 </CarouselDay>
+                <CarouselDay>Day 2 </CarouselDay>
+                <CarouselDay>Day 3 </CarouselDay>
+                <CarouselDay>Day 4 </CarouselDay>
+                <CarouselDay>Day 5 </CarouselDay>
+                <CarouselDay>Day 6 </CarouselDay>
+                <CarouselDay>Day 7 </CarouselDay>
+                <CarouselDay>Day 8 </CarouselDay>
+                <CarouselDay>Day 9 </CarouselDay>
+              </CarouselDayContainer>
+              <KeyboardArrowRightSharp right />
+              <ActionButton>
+                <AddCircleOutlineOutlined />
+                <ActionButtonTitle>Add Day</ActionButtonTitle>
+              </ActionButton>
+            </Carousel>
+            <CourseContentContainer>
+              <CourseContentWrapper>
+                <ParagraphContainer>
+                  <TextField
+                    label="Paragraph"
+                    variant="outlined"
+                    required
+                    color="primary"
+                    multiline
+                    fullWidth
+                    rows={4}
+                    margin="normal"
+                  />
+                </ParagraphContainer>
+                <MediaContainer>
+                  <TextField
+                    label="Media"
+                    variant="outlined"
+                    required
+                    color="primary"
+                    fullWidth
+                    margin="normal"
+                  />
+                  <UploadOutlined />
+                </MediaContainer>
+              </CourseContentWrapper>
+              <ActionButton two>
+                <AddCircleOutlineOutlined />
+                <ActionButtonTitle>Add Paragraph</ActionButtonTitle>
+              </ActionButton>
+            </CourseContentContainer>
+          </BottomContainer>
+          <ButtonContainer>
+            <Button title="Cancel" />
+            <Button title="Add Course" type="Primary" />
+          </ButtonContainer>
         </Form>
-        <h3>JAHHJSJH</h3>
       </Wrapper>
     </Container>
   );
@@ -109,22 +171,28 @@ const Wrapper = styled.div`
   background: white;
   width: 100%;
   margin: 0 0.6rem;
-  min-height: 83vh;
+  min-height: 84vh;
   height: auto;
   border-radius: 0.6rem;
 `;
 
 const Title = styled.h3`
-  /* font-weight: 700; */
   font-size: 24px;
   color: #1e1e1e;
-  padding:1rem 2rem 1rem 2rem;
+  padding: 1rem 2rem 1rem 2rem;
 `;
 const Form = styled.form`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   margin: 0 2rem;
 `;
+
+const TopContainer = styled.div`
+  display: flex;
+  flex: 1;
+`;
+
 const LeftContainer = styled.div`
   flex: 1;
   margin-right: 6rem;
@@ -163,6 +231,113 @@ const Select = styled.select`
 `;
 const Option = styled.option`
   /* color:#C4C4C4; */
+`;
+
+const BottomContainer = styled.div``;
+
+const Carousel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width:100%; */
+  svg {
+    color: rgba(34, 124, 157, 1);
+    background: rgba(34, 124, 157, 0.05);
+    padding: 0.1rem;
+    border-radius: 50%;
+    margin: 0 20px;
+    cursor: pointer;
+  }
+`;
+
+const CarouselDayContainer = styled.div`
+  display: flex;
+  overflow: scroll;
+  scroll-snap-type: x mandatory;
+  max-width: 62%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const CarouselDay = styled.span`
+  background: rgba(34, 124, 157, 0.05);
+  border-radius: 5px 5px 0px 0px;
+  padding: 0.6rem;
+  text-align: center;
+  min-width: 6rem;
+  cursor: pointer;
+
+  :not(:last-child) {
+    margin-right: 10px;
+  }
+`;
+
+const ActionButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #227c9d;
+  border-radius: 0.3rem;
+  color: white;
+  ${({ two }) =>
+    two &&
+    `
+    margin-top:1rem;
+    display: flex;
+    width:150px;
+  `}
+  padding: 0.3rem 0.5rem;
+
+  cursor: pointer;
+  /* margin-bottom:10px; */
+  svg {
+    margin-left: 0;
+    margin-right: 0.3rem;
+    color: #fff;
+  }
+`;
+const ActionButtonTitle = styled.span``;
+const CourseContentContainer = styled.div`
+  width: 100%;
+  height: 250px;
+  background: rgba(34, 124, 157, 0.05);
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  height: max-content;
+`;
+
+const CourseContentWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  height: max-content;
+`;
+
+const ParagraphContainer = styled.div`
+  flex: 1;
+  margin-right: 6rem;
+`;
+const MediaContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  svg {
+    color: #545353;
+    background: white;
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 export default AddCourse;

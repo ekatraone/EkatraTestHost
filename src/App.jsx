@@ -9,6 +9,13 @@ import Cohorts from "./Pages/Cohorts";
 import Courses from "./Pages/Courses";
 import Home from "./Pages/Home";
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
 function App() {
   return (
     <Container>
