@@ -8,6 +8,7 @@ import {
   MoreVertOutlined,
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -19,10 +20,12 @@ const Navbar = () => {
 
       <RightContainer>
         <ActionContainer>
-          <ActionButton>
-            <AddCircleOutlineOutlined />
-            <ActionButtonTitle>Create Course</ActionButtonTitle>
-          </ActionButton>
+          <Link to="/courses/addcourse">
+            <ActionButton>
+              <AddCircleOutlineOutlined />
+              <ActionButtonTitle>Create Course</ActionButtonTitle>
+            </ActionButton>
+          </Link>
           <CalendarMonthOutlined />
           <NotificationsOutlined />
         </ActionContainer>
@@ -56,19 +59,18 @@ const LeftContainer = styled.div`
   align-items: center;
   /* justify-content:center; */
   flex: 2;
-  svg{
-    color:#C4C4c4;
+  svg {
+    color: #c4c4c4;
   }
-
 `;
 
 const Input = styled.input`
-  border:none;
-  width:100%;
-  padding:0.5rem;
-  color:#9f9c9c;
-  font-size:20px;
-  &:focus{
+  border: none;
+  width: 100%;
+  padding: 0.5rem;
+  color: #9f9c9c;
+  font-size: 20px;
+  &:focus {
     outline: none;
   }
 `;
@@ -78,7 +80,7 @@ const Partition = styled.div`
   height: 2rem;
   /* background-color: #c4c4c4; */
   border: 1px solid #c4c4c4;
-  margin:0 1rem;
+  margin: 0 1rem;
 `;
 
 const RightContainer = styled.div`
@@ -95,7 +97,7 @@ const ActionContainer = styled.div`
     margin-left: 1.3rem;
     color: #227c9d;
   }
-  *{
+  * {
     cursor: pointer;
   }
 `;
@@ -128,17 +130,15 @@ const EducatorDetailsContainer = styled.div`
 `;
 
 const EducatorName = styled.span`
-  color:#227c9d;
-  font-weight:600;
-  font-size:16px;
+  color: #227c9d;
+  font-weight: 600;
+  font-size: 16px;
 `;
 const EducatorSpecialization = styled.span`
-  color:#c4c4c4;
-  font-weight:400;
-  font-size:12px;
+  color: #c4c4c4;
+  font-weight: 400;
+  font-size: 12px;
 `;
-const DottedDiv = styled.div`
-
-`;
+const DottedDiv = styled.div``;
 
 export default Navbar;

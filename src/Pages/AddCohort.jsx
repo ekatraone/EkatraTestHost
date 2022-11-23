@@ -1,14 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Table from "../components/Table";
 
 const AddCohort = () => {
-
   const columns = [
     { field: "name", headerName: "Name", minWidth: 300, maxWidth: 350 },
-
-    { field: "number", headerName: "Contact Number", minWidth: 300, maxWidth: 350 },
+    {
+      field: "number",
+      headerName: "Contact Number",
+      minWidth: 300,
+      maxWidth: 350,
+    },
     { field: "channel", headerName: "Channel", minWidth: 300, maxWidth: 350 },
     { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
@@ -17,90 +21,87 @@ const AddCohort = () => {
     {
       id: 1,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 2,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 3,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 4,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 5,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 6,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 7,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 8,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
     {
       id: 9,
       name: "Jon",
-      number:  "+" + 918930113390,
+      number: "+" + 918930113390,
       status: 4,
       channel: "WhatsApp",
-      edit:"EDIT / DELETE"
+      edit: "EDIT / DELETE",
     },
   ];
-
 
   return (
     <Container>
       <Wrapper>
         <Title>Add Cohort</Title>
-        <Table 
-          isHavingTwoButtons
-          columns={columns}
-          rows = {rows}
-        />
-        <ButtonContainer>
-          <Button title="Go Back" />
-        </ButtonContainer>
+        <Table isHavingTwoButtons columns={columns} rows={rows} />
+        <Link to="/cohorts">
+          <ButtonContainer>
+            <Button title="Go Back" />
+          </ButtonContainer>
+        </Link>
       </Wrapper>
     </Container>
   );
@@ -134,14 +135,14 @@ const Title = styled.h2`
   font-size: 24px;
   font-weight: 700;
   margin-left: 1.2rem;
-  margin-top:0.6rem;
+  margin-top: 0.6rem;
   padding: 0.4rem 0 0 0.4rem;
 `;
 
 const ButtonContainer = styled.div`
-    display: flex;
-    justify-content:flex-end;
-    margin:0.6rem 1.3rem;
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.6rem 1.3rem;
 `;
 
 export default AddCohort;

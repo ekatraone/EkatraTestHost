@@ -9,30 +9,31 @@ import Cohorts from "./Pages/Cohorts";
 import Courses from "./Pages/Courses";
 import Home from "./Pages/Home";
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {
   return (
-    <Container>
-      <Sidebar />
-      <Section>
-        <Navbar />
+    <Router>
+      <Switch>
+        <Container>
+          <Sidebar />
+          <Section>
+            <Navbar />
+            {/* Pages */}
+            <Route exact path="/" component={Home} />
+          
+            <Route path="/courses/addcourse" component={AddCourse} />
+            <Route exact path="/courses" component={Courses} />
+            
+            <Route path="/cohorts/cohort/:id" component={Cohort} />
+            <Route path="/cohorts/addcohort" component={AddCohort} />
+            <Route exact path="/cohorts" component={Cohorts} />
 
-        {/* Pages */}
-
-        {/* <Home /> */}
-        {/* <Courses /> */}
-        {/* <Cohorts /> */}
-        {/* <AddCohort /> */}
-        {/* <Cohort /> */}
-        <AddCourse />
-      </Section>
-    </Container>
+            {/* <AddCourse /> */}
+          </Section>
+        </Container>
+      </Switch>
+    </Router>
   );
 }
 
@@ -43,7 +44,7 @@ const Container = styled.div`
 `;
 
 const Section = styled.div`
-  flex:6;
+  flex: 6;
 `;
 
 export default App;

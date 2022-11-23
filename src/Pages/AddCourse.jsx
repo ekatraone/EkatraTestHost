@@ -7,6 +7,7 @@ import {
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 
@@ -143,7 +144,9 @@ const AddCourse = () => {
             </CourseContentContainer>
           </BottomContainer>
           <ButtonContainer>
-            <Button title="Cancel" />
+            <Link to="/courses">
+              <Button title="Cancel" />
+            </Link>
             <Button title="Add Course" type="Primary" />
           </ButtonContainer>
         </Form>

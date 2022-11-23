@@ -1,43 +1,63 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAltOutlined";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import ImportContactsOutlinedIcon from "@mui/icons-material/ImportContactsOutlined";
 import CameraOutdoorOutlinedIcon from "@mui/icons-material/CameraOutdoorOutlined";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+
 const Sidebar = () => {
+  const currentRoute = useHistory().location.pathname.toLowerCase();
+  const navigationItems = useMemo(() => [
+    {
+      value: "Dashboard",
+      src: <HomeOutlinedIcon />,
+      link: "/",
+    },
+    {
+      value: "Analytics",
+      src: <SignalCellularAltOutlinedIcon />,
+      link: "/2",
+    },
+    {
+      value: "Courses",
+      src: <Groups2OutlinedIcon />,
+      link: "/courses",
+    },
+    {
+      value: "Cohorts",
+      src: <ImportContactsOutlinedIcon />,
+      link: "/cohorts",
+    },
+    {
+      value: "Live Courses",
+      src: <CameraOutdoorOutlinedIcon />,
+      link: "/3",
+    },
+  ]);
+
   return (
     <Container>
       <TopContainer>
-        <HeadingContainer>
-          <Image src="/images/Logo1.svg" />
-          <Image src="/images/Logo2.svg" />
-        </HeadingContainer>
+        <Link to="/">
+          <HeadingContainer>
+            <Image src="/images/Logo1.svg" />
+            <Image src="/images/Logo2.svg" />
+          </HeadingContainer>
+        </Link>
         <NavigationMenu>
-          <NavigationItem>
-            <HomeOutlinedIcon />
-            <CustomHeading>Dashboard</CustomHeading>
-          </NavigationItem>
-
-          <NavigationItem>
-            <SignalCellularAltOutlinedIcon />
-            <CustomHeading>Analytics</CustomHeading>
-          </NavigationItem>
-
-          <NavigationItem>
-            <Groups2OutlinedIcon />
-            <CustomHeading>Courses</CustomHeading>
-          </NavigationItem>
-
-          <NavigationItem>
-            <ImportContactsOutlinedIcon />
-            <CustomHeading>Cohort</CustomHeading>
-          </NavigationItem>
-          
-          <NavigationItem>
-            <CameraOutdoorOutlinedIcon />
-            <CustomHeading>Live Courses</CustomHeading>
-          </NavigationItem>
+          {navigationItems.map((item) => (
+            <Link to={item.link}>
+              <NavigationItem
+                active={{ main: item.link === currentRoute && "active" }}
+              >
+                {item.src}
+                <CustomHeading>{item.value}</CustomHeading>
+              </NavigationItem>
+            </Link>
+          ))}
         </NavigationMenu>
       </TopContainer>
       <BottomContainer>
@@ -95,7 +115,7 @@ const NavigationItem = styled.div`
   margin-bottom: 2.3rem;
   display: flex;
   justify-content: flex-start;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.8rem;
   transition: all 0.5s ease;
   svg,
   img {
@@ -103,16 +123,25 @@ const NavigationItem = styled.div`
   }
   &:hover {
     background-color: #e9f5f5;
-    transform: scale(1.1);
     background: rgba(34, 124, 157, 0.1);
     border-radius: 0.6rem;
     cursor: pointer;
     svg,
-    img,span {
-      color: #227C9D;
+    img,
+    span {
+      color: #227c9d;
     }
-    
   }
+  ${({ active }) =>
+    active.main === "active"
+      ? `
+    span {
+      color: #227c9d;
+    }
+    background: rgba(34, 124, 157, 0.1);
+    border-radius: 0.6rem;
+  `
+      : ""}
 `;
 
 const CustomHeading = styled.span`

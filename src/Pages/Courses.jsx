@@ -2,14 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import CourseCard from "../components/CourseCard";
 import AddNewCard from "../components/AddNewCard";
+import { Link } from "react-router-dom";
 
 const Courses = () => {
   return (
     <Container>
-      <AddNewCard
-      src = "/images/CourseCard.svg"
-      title = "Add a new course"
-      />
+      <Link to="/courses/addcourse">
+        <AddNewCard src="/images/CourseCard.svg" title="Add a new course" />
+      </Link>
       <CourseCard
         title="Programming"
         desc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus

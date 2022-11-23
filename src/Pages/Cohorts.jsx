@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AddNewCard from "../components/AddNewCard";
 import CohortCard from "../components/CohortCard";
@@ -6,44 +7,45 @@ import CohortCard from "../components/CohortCard";
 const Cohorts = () => {
   return (
     <Container>
-      <AddNewCard 
-        src="/images/NewCohortCard.svg" 
-        title="Add a new cohort" 
+      <Link to="/cohorts/addcohort">
+        <AddNewCard src="/images/NewCohortCard.svg" title="Add a new cohort" />
+      </Link>
+      <Link to="/cohorts/cohort/1" style={{"color":"inherit"}}>
+        <CohortCard
+          batchMonth="Jan-to-Mar"
+          batchNumber="Batch 1"
+          totalUsers="80"
+          activeUsers="40"
+          openQueries="20"
+        />
+      </Link>
+      <CohortCard
+        batchMonth="Mar-to-Apr"
+        batchNumber="Batch 2"
+        totalUsers="60"
+        activeUsers="20"
+        openQueries="10"
       />
       <CohortCard
-        batchMonth = "Jan-to-Mar"
-        batchNumber = "Batch 1"
-        totalUsers = "80"
-        activeUsers = "40"
-        openQueries = "20"
+        batchMonth="Apr-to-May"
+        batchNumber="Batch 3"
+        totalUsers="20"
+        activeUsers="10"
+        openQueries="0"
       />
       <CohortCard
-        batchMonth = "Mar-to-Apr"
-        batchNumber = "Batch 2"
-        totalUsers = "60"
-        activeUsers = "20"
-        openQueries = "10"
+        batchMonth="Jun-to-Jul"
+        batchNumber="Batch 4"
+        totalUsers="65"
+        activeUsers="35"
+        openQueries="10"
       />
       <CohortCard
-        batchMonth = "Apr-to-May"
-        batchNumber = "Batch 3"
-        totalUsers = "20"
-        activeUsers = "10"
-        openQueries = "0"
-      />
-      <CohortCard
-        batchMonth = "Jun-to-Jul"
-        batchNumber = "Batch 4"
-        totalUsers = "65"
-        activeUsers = "35"
-        openQueries = "10"
-      />
-      <CohortCard
-        batchMonth = "Jan-to-Mar"
-        batchNumber = "Batch 6"
-        totalUsers = "65"
-        activeUsers = "25"
-        openQueries = "10"
+        batchMonth="Jan-to-Mar"
+        batchNumber="Batch 6"
+        totalUsers="65"
+        activeUsers="25"
+        openQueries="10"
       />
     </Container>
   );
