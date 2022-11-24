@@ -2,8 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { DataGrid } from "@mui/x-data-grid";
 import { Download, Upload } from "@mui/icons-material";
+import { useState } from "react";
 
-const Table = ({ rows,columns,isHavingTwoButtons, isHavingOneButton }) => {
+const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
+  const [csvFile, setCsvFile] = useState();
+
   // const columns = [
   //   { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
   //   {
@@ -97,6 +100,8 @@ const Table = ({ rows,columns,isHavingTwoButtons, isHavingOneButton }) => {
   //   },
   // ];
 
+  console.log(csvFile)
+
   return (
     <Container
       isHavingTwoButtons={{ main: [isHavingTwoButtons, isHavingOneButton] }}
@@ -110,8 +115,18 @@ const Table = ({ rows,columns,isHavingTwoButtons, isHavingOneButton }) => {
               <ButtonTitle>Download Sample Excel</ButtonTitle>
             </CustomButton>
             <CustomButton>
-              <Upload />
-              <ButtonTitle>Upload CSV</ButtonTitle>
+              <UploadInput
+                id="file-upload"
+                type="file"
+                onChange={(e) => {
+                  setCsvFile(e.target.files[0]);
+                }}
+              />
+
+              <ButtonTitle htmlFor="file-upload">
+                <Upload htmlFor="file-upload" />
+                Upload CSV
+              </ButtonTitle>
             </CustomButton>
           </ButtonContainer>
         )}
@@ -143,14 +158,15 @@ const Container = styled.div`
   padding: 1rem 1.3rem;
   margin: 0 28px;
   border-radius: 10px;
-  ${({ isHavingTwoButtons:{main} }) =>
-    main.isHavingOneButton || main.isHavingTwoButtons &&
-    `
+  ${({ isHavingTwoButtons: { main } }) =>
+    main.isHavingOneButton ||
+    (main.isHavingTwoButtons &&
+      `
     margin-top:1rem;
     box-shadow: 0px 4px 20px #F3F3F3;
     -webkit-box-shadow: 0px 4px 20px #F3F3F3;
     -moz-box-shadow: 0px 4px 20px #F3F3F3;
-  `}
+  `)}
 `;
 
 const TableHeadingContainer = styled.span`
@@ -176,10 +192,18 @@ const CustomButton = styled.div`
   svg {
     color: white;
   }
+  input[type="file"] {
+    display: none;
+  }
 `;
 
-const ButtonTitle = styled.span`
+const UploadInput = styled.input``;
+
+const ButtonTitle = styled.label`
   color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 export default Table;

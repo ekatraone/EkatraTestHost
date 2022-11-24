@@ -5,7 +5,7 @@ const Button = ({ type, title }) => {
   return <Container type={{ main: type }}>{title}</Container>;
 };
 
-const Container = styled.div`
+const Container = styled.button`
   padding: 10px 35px;
   /* max-width:10rem; */
   margin: 0.5rem;
@@ -14,6 +14,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border:none;
   ${({ type }) =>
     type.main === "Primary"
       ? `

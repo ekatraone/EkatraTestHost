@@ -92,6 +92,18 @@ const AddCohort = () => {
     },
   ];
 
+  const handleUploadFile = (e) => {
+    const file = csvFile;
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const text = e.target.result;
+      console.log("TEXT IS",text);
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -100,6 +112,11 @@ const AddCohort = () => {
         <Link to="/cohorts">
           <ButtonContainer>
             <Button title="Go Back" />
+            <Button
+              onClick={handleUploadFile}
+              title="Add Cohort"
+              type="Primary"
+            />
           </ButtonContainer>
         </Link>
       </Wrapper>

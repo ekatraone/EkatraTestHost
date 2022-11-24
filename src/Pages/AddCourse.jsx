@@ -6,13 +6,18 @@ import {
 } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 
 const AddCourse = () => {
   const [filters, setFilter] = useState({});
+  const [days, setDays] = useState(7);
+  let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
+  useEffect(() => {
+    console.log("rendered");
+  });
 
   const handleFilters = (e) => {
     const valueF = e.target.value;
@@ -26,7 +31,11 @@ const AddCourse = () => {
     );
   };
 
-  console.log(filters);
+  const handleAddDay = (e) => {
+    setDays((previouVal) => previouVal + 1);
+  };
+
+  // console.log(filters);
 
   return (
     <Container>
@@ -95,18 +104,12 @@ const AddCourse = () => {
             <Carousel>
               <KeyboardArrowLeftSharp />
               <CarouselDayContainer>
-                <CarouselDay>Day 1 </CarouselDay>
-                <CarouselDay>Day 2 </CarouselDay>
-                <CarouselDay>Day 3 </CarouselDay>
-                <CarouselDay>Day 4 </CarouselDay>
-                <CarouselDay>Day 5 </CarouselDay>
-                <CarouselDay>Day 6 </CarouselDay>
-                <CarouselDay>Day 7 </CarouselDay>
-                <CarouselDay>Day 8 </CarouselDay>
-                <CarouselDay>Day 9 </CarouselDay>
+                {daysArr.map((day) => (
+                  <CarouselDay key={day}>Day {day}</CarouselDay>
+                ))}
               </CarouselDayContainer>
               <KeyboardArrowRightSharp right />
-              <ActionButton>
+              <ActionButton onClick={handleAddDay}>
                 <AddCircleOutlineOutlined />
                 <ActionButtonTitle>Add Day</ActionButtonTitle>
               </ActionButton>
@@ -166,8 +169,7 @@ const Container = styled.main`
   display: flex;
   align-items: center;
   min-height: 92vh;
-  height: auto;
-  width: 100%;
+  max-width: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -230,7 +232,7 @@ const Select = styled.select`
   padding: 10px;
   width: 20rem;
   border: 1px solid #c4c4c4;
-  border-radius: 0.3rem;
+  border-radius: 0.4rem;
 `;
 const Option = styled.option`
   /* color:#C4C4C4; */
@@ -242,7 +244,7 @@ const Carousel = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  /* width:100%; */
+  /* max-width:100vw; */
   svg {
     color: rgba(34, 124, 157, 1);
     background: rgba(34, 124, 157, 0.05);
@@ -257,7 +259,8 @@ const CarouselDayContainer = styled.div`
   display: flex;
   overflow: scroll;
   scroll-snap-type: x mandatory;
-  max-width: 62%;
+  width: 62%;
+  max-width: 65vw;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -269,6 +272,7 @@ const CarouselDay = styled.span`
   padding: 0.6rem;
   text-align: center;
   min-width: 6rem;
+  max-width: 6rem;
   cursor: pointer;
 
   :not(:last-child) {

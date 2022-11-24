@@ -15,26 +15,34 @@ const Sidebar = () => {
       value: "Dashboard",
       src: <HomeOutlinedIcon />,
       link: "/",
+      id:1
     },
     {
       value: "Analytics",
       src: <SignalCellularAltOutlinedIcon />,
       link: "/2",
+      id:1
     },
     {
       value: "Courses",
       src: <Groups2OutlinedIcon />,
       link: "/courses",
+      id:3
+
     },
     {
       value: "Cohorts",
       src: <ImportContactsOutlinedIcon />,
       link: "/cohorts",
+      id:4
+
     },
     {
       value: "Live Courses",
       src: <CameraOutdoorOutlinedIcon />,
       link: "/3",
+      id:5
+
     },
   ]);
 
@@ -52,6 +60,7 @@ const Sidebar = () => {
             <Link to={item.link}>
               <NavigationItem
                 active={{ main: item.link === currentRoute && "active" }}
+                key={item.id}
               >
                 {item.src}
                 <CustomHeading>{item.value}</CustomHeading>

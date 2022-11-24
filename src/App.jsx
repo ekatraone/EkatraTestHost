@@ -29,7 +29,6 @@ function App() {
             <Route path="/cohorts/addcohort" component={AddCohort} />
             <Route exact path="/cohorts" component={Cohorts} />
 
-            {/* <AddCourse /> */}
           </Section>
         </Container>
       </Switch>
