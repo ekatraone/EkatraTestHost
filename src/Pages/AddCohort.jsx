@@ -10,11 +10,11 @@ const AddCohort = () => {
     {
       field: "number",
       headerName: "Contact Number",
-      minWidth: 300,
-      maxWidth: 350,
+      minWidth: 400,
+      maxWidth: 450,
     },
-    { field: "channel", headerName: "Channel", minWidth: 300, maxWidth: 350 },
-    { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
+    { field: "channel", headerName: "Channel", minWidth: 400, maxWidth: 450 },
+    // { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
 
   const rows = [
@@ -92,33 +92,22 @@ const AddCohort = () => {
     },
   ];
 
-  const handleUploadFile = (e) => {
-    const file = csvFile;
-    const reader = new FileReader();
 
-    reader.onload = function (e) {
-      const text = e.target.result;
-      console.log("TEXT IS",text);
-    };
-
-    reader.readAsText(file);
-  };
 
   return (
     <Container>
       <Wrapper>
         <Title>Add Cohort</Title>
         <Table isHavingTwoButtons columns={columns} rows={rows} />
-        <Link to="/cohorts">
-          <ButtonContainer>
+        {/* <ButtonContainer>
+          <Link to="/cohorts">
             <Button title="Go Back" />
-            <Button
-              onClick={handleUploadFile}
-              title="Add Cohort"
-              type="Primary"
-            />
-          </ButtonContainer>
-        </Link>
+          </Link>
+          <Button
+            title="Add Cohort"
+            type="Primary"
+          />
+        </ButtonContainer> */}
       </Wrapper>
     </Container>
   );
@@ -143,7 +132,7 @@ const Wrapper = styled.div`
   background: white;
   width: 100%;
   margin: 0 0.6rem;
-  min-height: 80vh;
+  min-height: 70vh;
   height: auto;
   border-radius: 0.6rem;
 `;
@@ -156,10 +145,10 @@ const Title = styled.h2`
   padding: 0.4rem 0 0 0.4rem;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin: 0.6rem 1.3rem;
-`;
+// const ButtonContainer = styled.div`
+//   display: flex;
+//   justify-content: flex-end;
+//   margin: 0.6rem 1.3rem;
+// `;
 
 export default AddCohort;

@@ -3,10 +3,13 @@ import styled from "styled-components";
 import { DataGrid } from "@mui/x-data-grid";
 import { Download, Upload } from "@mui/icons-material";
 import { useState } from "react";
+import Button from "./Button";
+import { Link } from "react-router-dom";
+import * as XLSX from "xlsx/xlsx.mjs";
 
 const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   const [csvFile, setCsvFile] = useState();
-
+  const [csvData, setCsvData] = useState([]);
   // const columns = [
   //   { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
   //   {
@@ -100,7 +103,27 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   //   },
   // ];
 
-  console.log(csvFile)
+  const handleUploadFile = (e) => {
+    // const fileData = {};
+    // const file = csvFile;
+    // fileData["fileName"] = file[0].name;
+    const reader = new FileReader();
+    reader.readAsBinaryString(csvFile);
+    reader.onload = (e) => {
+      const text = e.target.result;
+      let workbook = XLSX.read(text, { type: "binary" });
+      console.log(workbook);
+      workbook.SheetNames.forEach((sheet) => {
+        let rowObject = XLSX.utils.sheet_to_row_object_array(
+          workbook.Sheets[sheet]
+        );
+        console.table(rowObject);
+        setCsvData(rowObject);
+      });
+    };
+  };
+
+  console.log(csvData);
 
   return (
     <Container
@@ -140,7 +163,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         )}
       </TableHeadingContainer>
       <DataGrid
-        rows={rows}
+        rows={ isHavingTwoButtons ? csvData: rows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
@@ -149,6 +172,14 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         autoPageSize
         GridColDef="flex"
       />
+      {isHavingTwoButtons && (
+        <ButtonContainer>
+          <Link to="/cohorts">
+            <Button title="Go Back" />
+          </Link>
+          <Button func={handleUploadFile} title="Add Cohort" type="Primary" />
+        </ButtonContainer>
+      )}
     </Container>
   );
 };
@@ -177,10 +208,7 @@ const TableHeadingContainer = styled.span`
 `;
 
 const TableHeading = styled.h2``;
-const ButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
+
 const CustomButton = styled.div`
   display: flex;
   align-items: center;
@@ -204,6 +232,12 @@ const ButtonTitle = styled.label`
   cursor: pointer;
   display: flex;
   align-items: center;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.6rem 1.3rem;
 `;
 
 export default Table;
