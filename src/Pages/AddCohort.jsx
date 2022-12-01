@@ -10,11 +10,11 @@ const AddCohort = () => {
     {
       field: "number",
       headerName: "Contact Number",
-      minWidth: 400,
-      maxWidth: 450,
+      minWidth: 300,
+      maxWidth: 350,
     },
-    { field: "channel", headerName: "Channel", minWidth: 400, maxWidth: 450 },
-    // { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
+    { field: "channel", headerName: "Channel", minWidth: 300, maxWidth: 350 },
+    { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
 
   const rows = [
@@ -91,8 +91,6 @@ const AddCohort = () => {
       edit: "EDIT / DELETE",
     },
   ];
-
-
 
   return (
     <Container>

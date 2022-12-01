@@ -12,70 +12,111 @@ import styled from "styled-components";
 import Button from "../components/Button";
 
 const AddCourse = () => {
-  const [filters, setFilter] = useState({});
-  const [days, setDays] = useState(7);
-  let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
-  useEffect(() => {
-    console.log("rendered");
+  const [formContent, setFormContent] = useState({
+    days: {},
   });
+  const [days, setDays] = useState(7);
+  const [currentDay, setCurrentDay] = useState(1);
+  const [media, setMedia] = useState(1);
 
-  const handleFilters = (e) => {
+  let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
+  let mediaArr = new Array(media).fill("").map((val, idx) => idx + 1);
+
+  console.log(formContent);
+
+  const handleForm = (e) => {
     const valueF = e.target.value;
     const name = e.target.name;
-    setFilter(
-      (value) =>
-        (value = {
-          ...value,
-          [name]: valueF,
-        })
-    );
+    if (name.includes("paragraph") || name.includes("media")) {
+      setFormContent(
+        (value) =>
+          (value = {
+            ...value,
+            days: {
+              ...value.days,
+              ["day" + currentDay]: {
+
+                ...value.days['day'+currentDay] ,
+                [name]: valueF,
+                // [name]: valueF,
+              },
+            },
+          })
+      );
+    } else {
+      setFormContent(
+        (value) =>
+          (value = {
+            ...value,
+            [name]: valueF,
+          })
+      );
+    }
   };
 
-  const handleAddDay = (e) => {
+  const handleAddDay = () => {
     setDays((previouVal) => previouVal + 1);
   };
 
-  // console.log(filters);
+  const handleMedia = () => {
+    setMedia((previouVal) => previouVal + 1);
+  };
+
+  const handleSingleDay = (day) => {
+    setCurrentDay(day);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //TODO: Make a POST request to the server
+
+  };
 
   return (
     <Container>
       <Wrapper>
         <Title>New Course</Title>
-        <Form noValidate autoComplete="off">
+        <Form noValidate autoComplete="off" >
           <TopContainer>
             <LeftContainer>
               <TextField
                 label="Course Name"
                 variant="outlined"
                 required
+                name="courseName"
                 // color="primary"
                 fullWidth
                 margin="normal"
+                onChange={handleForm}
               />
               <TextField
                 label="Brief Description"
                 variant="outlined"
+                name="desc"
                 required
                 color="primary"
                 fullWidth
                 multiline
                 rows={4}
+                onChange={handleForm}
               />
             </LeftContainer>
             <RightContainer>
               <TextField
                 label="Course Instructor Name"
                 required
+                name="instructorName"
                 color="primary"
                 fullWidth
                 margin="normal"
+                onChange={handleForm}
               />
               <FilterContainer>
                 <Filter>
                   <SingleFilterContainer>
                     <FilterText>Category</FilterText>
 
-                    <Select name="category" onChange={handleFilters} required>
+                    <Select name="category" onChange={handleForm} required>
                       <Option disabled selected>
                         Select Category
                       </Option>
@@ -87,7 +128,7 @@ const AddCourse = () => {
 
                   <SingleFilterContainer>
                     <FilterText>Language</FilterText>
-                    <Select name="language" onChange={handleFilters} required>
+                    <Select name="language" onChange={handleForm} required>
                       <Option disabled selected>
                         Language
                       </Option>
@@ -105,7 +146,13 @@ const AddCourse = () => {
               <KeyboardArrowLeftSharp />
               <CarouselDayContainer>
                 {daysArr.map((day) => (
-                  <CarouselDay key={day}>Day {day}</CarouselDay>
+                  <CarouselDay
+                    key={day}
+                    onClick={() => handleSingleDay(day)}
+                    main={{ active: currentDay === day ? "active" : "" }}
+                  >
+                    Day {day}
+                  </CarouselDay>
                 ))}
               </CarouselDayContainer>
               <KeyboardArrowRightSharp right />
@@ -115,32 +162,38 @@ const AddCourse = () => {
               </ActionButton>
             </Carousel>
             <CourseContentContainer>
-              <CourseContentWrapper>
-                <ParagraphContainer>
-                  <TextField
-                    label="Paragraph"
-                    variant="outlined"
-                    required
-                    color="primary"
-                    multiline
-                    fullWidth
-                    rows={4}
-                    margin="normal"
-                  />
-                </ParagraphContainer>
-                <MediaContainer>
-                  <TextField
-                    label="Media"
-                    variant="outlined"
-                    required
-                    color="primary"
-                    fullWidth
-                    margin="normal"
-                  />
-                  <UploadOutlined />
-                </MediaContainer>
-              </CourseContentWrapper>
-              <ActionButton two>
+              {mediaArr.map((media) => (
+                <CourseContentWrapper key={media}>
+                  <ParagraphContainer>
+                    <TextField
+                      label="Paragraph"
+                      variant="outlined"
+                      required
+                      color="primary"
+                      multiline
+                      fullWidth
+                      name={"paragraph"+media}
+                      rows={4}
+                      margin="normal"
+                      onChange={handleForm}
+                    />
+                  </ParagraphContainer>
+                  <MediaContainer>
+                    <TextField
+                      label="Media"
+                      variant="outlined"
+                      required
+                      color="primary"
+                      fullWidth
+                      margin="normal"
+                      name={"media"+media}
+                      onChange={handleForm}
+                    />
+                    <UploadOutlined />
+                  </MediaContainer>
+                </CourseContentWrapper>
+              ))}
+              <ActionButton two onClick={handleMedia}>
                 <AddCircleOutlineOutlined />
                 <ActionButtonTitle>Add Paragraph</ActionButtonTitle>
               </ActionButton>
@@ -150,7 +203,7 @@ const AddCourse = () => {
             <Link to="/courses">
               <Button title="Cancel" />
             </Link>
-            <Button title="Add Course" type="Primary" />
+            <Button func={handleSubmit} title="Add Course" type="Primary" />
           </ButtonContainer>
         </Form>
       </Wrapper>
@@ -267,7 +320,8 @@ const CarouselDayContainer = styled.div`
 `;
 
 const CarouselDay = styled.span`
-  background: rgba(34, 124, 157, 0.05);
+  background: ${({ main }) => (main.active ? "rgba(34, 124, 157, 0.05)" : "")};
+
   border-radius: 5px 5px 0px 0px;
   padding: 0.6rem;
   text-align: center;
@@ -312,7 +366,13 @@ const CourseContentContainer = styled.div`
   display: flex;
   padding: 1rem;
   flex-direction: column;
-  height: max-content;
+  height: 30vh;
+  max-height: 30vh;
+  overflow: scroll;
+  scroll-snap-type: y mandatory;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CourseContentWrapper = styled.div`

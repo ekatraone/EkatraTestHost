@@ -63,7 +63,7 @@ const Sidebar = () => {
                 key={item.id}
               >
                 {item.src}
-                <CustomHeading>{item.value}</CustomHeading>
+                <CustomHeading >{item.value}</CustomHeading>
               </NavigationItem>
             </Link>
           ))}
