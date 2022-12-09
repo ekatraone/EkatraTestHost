@@ -27,6 +27,7 @@ const AddCourse = () => {
   const handleForm = (e) => {
     const valueF = e.target.value;
     const name = e.target.name;
+
     if (name.includes("paragraph") || name.includes("media")) {
       setFormContent(
         (value) =>
@@ -35,8 +36,7 @@ const AddCourse = () => {
             days: {
               ...value.days,
               ["day" + currentDay]: {
-
-                ...value.days['day'+currentDay] ,
+                ...value.days["day" + currentDay],
                 [name]: valueF,
                 // [name]: valueF,
               },
@@ -64,19 +64,19 @@ const AddCourse = () => {
 
   const handleSingleDay = (day) => {
     setCurrentDay(day);
+    // setMedia(1)
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     //TODO: Make a POST request to the server
-
   };
 
   return (
     <Container>
       <Wrapper>
         <Title>New Course</Title>
-        <Form noValidate autoComplete="off" >
+        <Form noValidate autoComplete="off">
           <TopContainer>
             <LeftContainer>
               <TextField
@@ -172,7 +172,7 @@ const AddCourse = () => {
                       color="primary"
                       multiline
                       fullWidth
-                      name={"paragraph"+media}
+                      name={"paragraph" + media}
                       rows={4}
                       margin="normal"
                       onChange={handleForm}
@@ -186,7 +186,7 @@ const AddCourse = () => {
                       color="primary"
                       fullWidth
                       margin="normal"
-                      name={"media"+media}
+                      name={"media" + media}
                       onChange={handleForm}
                     />
                     <UploadOutlined />

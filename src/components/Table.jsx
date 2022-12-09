@@ -123,6 +123,23 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     };
   };
 
+  const handleExcelFile = (e) => {
+    const reader = new FileReader();
+    reader.readAsBinaryString(e.target.files[0]);
+    reader.onload = (e) => {
+      const text = e.target.result;
+      let workbook = XLSX.read(text, { type: "binary" });
+      console.log(workbook);
+      workbook.SheetNames.forEach((sheet) => {
+        let rowObject = XLSX.utils.sheet_to_row_object_array(
+          workbook.Sheets[sheet]
+        );
+        console.table(rowObject);
+        setCsvData(rowObject);
+      });
+    };
+  };
+
   console.log(csvData);
 
   return (
@@ -135,17 +152,20 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           <ButtonContainer>
             <CustomButton sample>
               <Download />
-              <ButtonTitle>Download Sample Excel</ButtonTitle>
+              <ButtonTitleDownload
+                href="/assets/sampleCohort.xlsx"
+                target="_blank"
+                download
+              >
+                Download Sample Excel
+              </ButtonTitleDownload>
             </CustomButton>
             <CustomButton>
               <UploadInput
                 id="file-upload"
                 type="file"
-                onChange={(e) => {
-                  setCsvFile(e.target.files[0]);
-                }}
+                onChange={handleExcelFile}
               />
-
               <ButtonTitle htmlFor="file-upload">
                 <Upload htmlFor="file-upload" />
                 Upload CSV
@@ -163,7 +183,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         )}
       </TableHeadingContainer>
       <DataGrid
-        rows={ isHavingTwoButtons ? csvData: rows}
+        rows={isHavingTwoButtons ? csvData : rows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
@@ -229,6 +249,13 @@ const UploadInput = styled.input``;
 
 const ButtonTitle = styled.label`
   color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+const ButtonTitleDownload = styled.a`
+    color: white;
   cursor: pointer;
   display: flex;
   align-items: center;

@@ -59,7 +59,7 @@ const Sidebar = () => {
           {navigationItems.map((item) => (
             <Link to={item.link}>
               <NavigationItem
-                active={{ main: item.link === currentRoute && "active" }}
+                active={{ main: item['link'] === currentRoute && "active" }}
                 key={item.id}
               >
                 {item.src}
