@@ -9,29 +9,52 @@ import Cohorts from "./Pages/Cohorts";
 import Courses from "./Pages/Courses";
 import Home from "./Pages/Home";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import base from "./api/base";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+
+import base from "./api/base";
 
 const KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
 
 function App() {
-  console.log(KEY);
+  const [records, setRecords] = useState([]);
 
-  const [data,setData] = useState([])
+  const getRecords = async () => {
+    const data = await fetch(`https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_AIRTABLE_TABLE_NAME}`,
+      {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+        },
+        mode: "cors",
+      }
+    );
+    const res = await data.json()
+    console.log(res)
+    setRecords(res.records)
+  };
 
-  useEffect(()=>{
-    base('Sheet1').select({
-      view:"Grid view"
-    }).eachPage((records,fetchNextPage) =>{
-      records.forEach((record)=>{
-        // console.log(record.fields)
-        console.log(record)
-      })
-      fetchNextPage()
-    })
-  },[])
+  useEffect(() => {
+
+    // Normal API
+
+    // base('Sheet1').select({
+    //   view:"Grid view"
+    // }).eachPage((records,fetchNextPage) =>{
+    //   console.log(records)
+    //   records.forEach((record)=>{
+    //     // console.log(record.fields)
+    //     console.log(record.fields)
+    //     setData((prev)=>[...prev,record.fields])
+    //   })
+    //   fetchNextPage()
+    // })
+
+    // Using WEB API
+    getRecords();
+  }, []);
+
+  console.log(records)
 
   return (
     <Router>

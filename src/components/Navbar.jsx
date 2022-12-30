@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import {
   SearchOutlined,
@@ -9,8 +9,18 @@ import {
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Navbar = () => {
+  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
+    useAuth0();
+
+  useEffect(()=>{
+    user?.sub && console.log("USer CHanged")
+    //:TODO check if Authenticated and if yes then in airtable try to find the person with user.sub, if exists return the object and if doesnot exist upload data into the airtable.
+    isAuthenticated && fetch("URL")
+  },[user])
+
   return (
     <Container>
       <LeftContainer>
@@ -26,20 +36,34 @@ const Navbar = () => {
               <ActionButtonTitle>Create Course</ActionButtonTitle>
             </ActionButton>
           </Link>
+          {isAuthenticated ? (
+            <ActionButton
+              onClick={() => logout({ returnTo: window.location.origin })}
+            >
+              <AddCircleOutlineOutlined />
+              <ActionButtonTitle>Logout</ActionButtonTitle>
+            </ActionButton>
+          ) : (
+            <ActionButton onClick={() => loginWithRedirect()}>
+              <AddCircleOutlineOutlined />
+              <ActionButtonTitle>Login</ActionButtonTitle>
+            </ActionButton>
+          )}
           <CalendarMonthOutlined />
           <NotificationsOutlined />
         </ActionContainer>
 
         <EducatorContainer>
           <Partition></Partition>
-          <Avatar />
+          <Avatar src={user?.picture} />
           <EducatorDetailsContainer>
-            <EducatorName>John Doe</EducatorName>
-            <EducatorSpecialization>Data Scientist</EducatorSpecialization>
+            <EducatorName>{user?.name}</EducatorName>
+            {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
           </EducatorDetailsContainer>
         </EducatorContainer>
         <MoreVertOutlined />
       </RightContainer>
+
     </Container>
   );
 };
