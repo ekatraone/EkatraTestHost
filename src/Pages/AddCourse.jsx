@@ -67,9 +67,33 @@ const AddCourse = () => {
     // setMedia(1)
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     //TODO: Make a POST request to the server
+    console.log("clicked");
+
+    const data = JSON.stringify({
+      description: "Whether I have visited this apartment yet.",
+      name: "Visited8",
+      type: "singleLineText",
+    });
+
+    const res = await fetch(
+      `https://api.airtable.com/v0/meta/bases/${
+        import.meta.env.VITE_AIRTABLE_BASE_ID
+}/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        data:data,
+      }
+    );
+    console.log(res);
+    const res2 = await res.json();
+    console.log(res2);
   };
 
   return (

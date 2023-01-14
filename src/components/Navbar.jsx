@@ -15,11 +15,20 @@ const Navbar = () => {
   const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
     useAuth0();
 
-  useEffect(()=>{
-    user?.sub && console.log("USer CHanged")
+  const getUsersFromAuth0 = async () => {
+    await fetch("https://dev-uuiq5z2b4mju62wb.us.auth0.com/api/v2/users", {
+      method:"GET",
+      headers: {authorization: `Bearer ${import.meta.env.VITE_AUTH0_MGMT_API_ACCESS_TOKEN}`}
+    }).then(res=>console.log(res));
+  }
+
+  useEffect(() => {
     //:TODO check if Authenticated and if yes then in airtable try to find the person with user.sub, if exists return the object and if doesnot exist upload data into the airtable.
-    isAuthenticated && fetch("URL")
-  },[user])
+    isAuthenticated && getUsersFromAuth0
+
+  }, [user]);
+
+  // console.log(user)
 
   return (
     <Container>
@@ -29,41 +38,41 @@ const Navbar = () => {
       </LeftContainer>
 
       <RightContainer>
-        <ActionContainer>
-          <Link to="/courses/addcourse">
-            <ActionButton>
-              <AddCircleOutlineOutlined />
-              <ActionButtonTitle>Create Course</ActionButtonTitle>
-            </ActionButton>
-          </Link>
-          {isAuthenticated ? (
+        {isAuthenticated ? (
+          <>
             <ActionButton
               onClick={() => logout({ returnTo: window.location.origin })}
             >
-              <AddCircleOutlineOutlined />
               <ActionButtonTitle>Logout</ActionButtonTitle>
             </ActionButton>
-          ) : (
-            <ActionButton onClick={() => loginWithRedirect()}>
-              <AddCircleOutlineOutlined />
-              <ActionButtonTitle>Login</ActionButtonTitle>
-            </ActionButton>
-          )}
-          <CalendarMonthOutlined />
-          <NotificationsOutlined />
-        </ActionContainer>
+            <ActionContainer>
+              <Link to="/courses/addcourse">
+                <ActionButton>
+                  <AddCircleOutlineOutlined />
+                  <ActionButtonTitle>Create Course</ActionButtonTitle>
+                </ActionButton>
+              </Link>
 
-        <EducatorContainer>
-          <Partition></Partition>
-          <Avatar src={user?.picture} />
-          <EducatorDetailsContainer>
-            <EducatorName>{user?.name}</EducatorName>
-            {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
-          </EducatorDetailsContainer>
-        </EducatorContainer>
-        <MoreVertOutlined />
+              <CalendarMonthOutlined />
+              <NotificationsOutlined />
+            </ActionContainer>
+
+            <EducatorContainer>
+              <Partition></Partition>
+              <Avatar src={user?.picture} />
+              <EducatorDetailsContainer>
+                <EducatorName>{user?.given_name ? user?.given_name : user?.nickname  }</EducatorName>
+                {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
+              </EducatorDetailsContainer>
+            </EducatorContainer>
+            <MoreVertOutlined />
+          </>
+        ) : (
+          <ActionButton onClick={() => loginWithRedirect()}>
+            <ActionButtonTitle>Login</ActionButtonTitle>
+          </ActionButton>
+        )}
       </RightContainer>
-
     </Container>
   );
 };
@@ -112,6 +121,7 @@ const RightContainer = styled.div`
   align-items: center;
   flex-basis: 30rem;
   justify-content: flex-end;
+  gap: 2px;
 `;
 
 const ActionContainer = styled.div`
@@ -133,6 +143,7 @@ const ActionButton = styled.div`
   border-radius: 0.3rem;
   color: white;
   padding: 0.3rem 0.5rem;
+  cursor: pointer;
   svg {
     margin-left: 0;
     margin-right: 0.3rem;

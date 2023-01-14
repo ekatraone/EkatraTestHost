@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-const Button = ({ type, title,func }) => {
-  return <Container onClick={func} type={{ main: type }}>{title}</Container>;
+const Button = ({ type, title,func,disabled }) => {
+  return <Container onClick={func} type={{ main: type }} disabled={disabled} >{title}</Container>;
 };
 
 const Container = styled.button`
@@ -15,6 +15,11 @@ const Container = styled.button`
   justify-content: center;
   cursor: pointer;
   border:none;
+  &:disabled {
+    background-color:gray;
+    opacity:0.3;
+    cursor:not-allowed
+  }
   ${({ type }) =>
     type.main === "Primary"
       ? `
@@ -25,6 +30,7 @@ const Container = styled.button`
     background:rgba(254, 109, 115, 0.1);
     color:rgba(254, 109, 115, 1);
     `}
+    
 `;
 
 export default Button;

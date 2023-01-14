@@ -4,124 +4,33 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Download, Upload } from "@mui/icons-material";
 import { useState } from "react";
 import Button from "./Button";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import * as XLSX from "xlsx/xlsx.mjs";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect } from "react";
 
 const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
+  const { user } = useAuth0();
+  const history = useHistory();
+
   const [csvFile, setCsvFile] = useState();
   const [csvData, setCsvData] = useState([]);
-  // const columns = [
-  //   { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
-  //   {
-  //     field: "modules",
-  //     headerName: "Number Of Modules",
-  //     minWidth: 200,
-  //     maxWidth: 350,
-  //   },
-  //   { field: "tests", headerName: "Test Taken", minWidth: 200, maxWidth: 350 },
-  //   {
-  //     field: "avgScore",
-  //     headerName: "Average Score",
-  //     minWidth: 250,
-  //     maxWidth: 350,
-  //   },
-  //   { field: "channel", headerName: "Channel", minWidth: 250, maxWidth: 350 },
-  // ];
 
-  // const rows = [
-  //   {
-  //     id: 1,
-  //     name: "Jon",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 89,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Cersei",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 79,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Jaime",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 59,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Arya",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 69,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Daenerys",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 81,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Jammy",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 82,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "Ferrara",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 80,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 8,
-  //     name: "Rossini",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 57,
-  //     channel: "WhatsApp",
-  //   },
-  //   {
-  //     id: 9,
-  //     name: "Harvey",
-  //     modules: 4,
-  //     tests: 3,
-  //     avgScore: 75,
-  //     channel: "WhatsApp",
-  //   },
-  // ];
-
-  const handleUploadFile = (e) => {
-    // const fileData = {};
-    // const file = csvFile;
-    // fileData["fileName"] = file[0].name;
-    const reader = new FileReader();
-    reader.readAsBinaryString(csvFile);
-    reader.onload = (e) => {
-      const text = e.target.result;
-      let workbook = XLSX.read(text, { type: "binary" });
-      console.log(workbook);
-      workbook.SheetNames.forEach((sheet) => {
-        let rowObject = XLSX.utils.sheet_to_row_object_array(
-          workbook.Sheets[sheet]
-        );
-        console.table(rowObject);
-        setCsvData(rowObject);
-      });
-    };
-  };
+  const [monthsCount, setMonthsCount] = useState({
+    Jan: 0,
+    Feb: 0,
+    Mar: 0,
+    Apr: 0,
+    May: 0,
+    Jun: 0,
+    Jul: 0,
+    Aug: 0,
+    Sep: 0,
+    Oct: 0,
+    Nov: 0,
+    Dec: 0,
+  });
 
   const handleExcelFile = (e) => {
     const reader = new FileReader();
@@ -129,18 +38,78 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     reader.onload = (e) => {
       const text = e.target.result;
       let workbook = XLSX.read(text, { type: "binary" });
-      console.log(workbook);
       workbook.SheetNames.forEach((sheet) => {
         let rowObject = XLSX.utils.sheet_to_row_object_array(
           workbook.Sheets[sheet]
         );
-        console.table(rowObject);
+        // console.table(rowObject);
         setCsvData(rowObject);
       });
     };
   };
 
-  console.log(csvData);
+  const handleCohortName = () => {
+    const formatter = new Intl.DateTimeFormat("us", { month: "short" });
+    const months = Object.keys(monthsCount);
+    const currentMonth = formatter.format();
+    const nextMonth =
+      months[
+        months.indexOf(currentMonth) + 1 > 11
+          ? 0
+          : months.indexOf(currentMonth) + 1
+      ];
+    setMonthsCount((prev) => ({
+      ...prev,
+      [currentMonth]: prev[currentMonth] + 1,
+    }));
+
+    return {
+      cohortName: `${currentMonth}-to-${nextMonth}`,
+      cohortBatchNumber: `Batch ${monthsCount[currentMonth] + 1}`,
+    };
+  };
+
+  const handleUploadCohortFile = async (e) => {
+    const { cohortName, cohortBatchNumber } = handleCohortName();
+    console.log(cohortName, cohortBatchNumber);
+    const records = csvData.map((item) => ({
+      fields: {
+        User: user.sub,
+        Name: item.name,
+        Contact: String(item.number),
+        Channel: item.channel,
+        CohortName:cohortName,
+        BatchName:cohortBatchNumber
+      },
+    }));
+
+    const data = await fetch(`https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT}`,
+      {
+        method: "POST",
+        body: JSON.stringify({records}),
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if(data.ok){
+      const res = await data.json();
+      console.log(res);
+      history.push("/")
+    }
+  };
+
+  useEffect(()=>{
+    isHavingTwoButtons && setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount)
+  },[])
+
+  useEffect(()=>{
+    window.localStorage.setItem("monthsCount",JSON.stringify(monthsCount))
+  },[monthsCount])
+
+
 
   return (
     <Container
@@ -197,7 +166,12 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           <Link to="/cohorts">
             <Button title="Go Back" />
           </Link>
-          <Button func={handleUploadFile} title="Add Cohort" type="Primary" />
+          <Button
+            func={handleUploadCohortFile}
+            title="Add Cohort"
+            type="Primary"
+            disabled={csvData.length > 0 ? false : true}
+          />
         </ButtonContainer>
       )}
     </Container>
@@ -255,7 +229,7 @@ const ButtonTitle = styled.label`
 `;
 
 const ButtonTitleDownload = styled.a`
-    color: white;
+  color: white;
   cursor: pointer;
   display: flex;
   align-items: center;

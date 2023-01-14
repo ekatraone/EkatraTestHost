@@ -14,14 +14,19 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 import base from "./api/base";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
 
 function App() {
   const [records, setRecords] = useState([]);
-
+  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
+    useAuth0();
   const getRecords = async () => {
-    const data = await fetch(`https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_AIRTABLE_TABLE_NAME}`,
+    const data = await fetch(
+      `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
+        import.meta.env.VITE_AIRTABLE_TABLE_NAME_TRY
+      }`,
       {
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
@@ -29,13 +34,25 @@ function App() {
         mode: "cors",
       }
     );
-    const res = await data.json()
-    console.log(res)
-    setRecords(res.records)
+    const res = await data.json();
+    // console.log(res);
+    setRecords(res.records);
+  };
+
+  const getUsersFromAuth0 = async () => {
+    const res = await fetch("https://dev-uuiq5z2b4mju62wb.us.auth0.com/api/v2/users", {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${
+          import.meta.env.VITE_AUTH0_MGMT_API_ACCESS_TOKEN
+        }`,
+      },
+    })
+    const data = await res.json();
+    console.log(data)
   };
 
   useEffect(() => {
-
     // Normal API
 
     // base('Sheet1').select({
@@ -52,9 +69,11 @@ function App() {
 
     // Using WEB API
     getRecords();
-  }, []);
+    // isAuthenticated && getUsersFromAuth0();
+  }, [user]);
 
-  console.log(records)
+  //:TODO
+  // If user is there then we will redirect to a particular page else we will redirect to the Landing Page
 
   return (
     <Router>
