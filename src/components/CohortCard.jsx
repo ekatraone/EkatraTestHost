@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 
 const CohortCard = ({
-  batchMonth,
-  batchNumber,
+  cohortName,
+  batchName,
   totalUsers,
   activeUsers,
   openQueries,
@@ -11,8 +11,8 @@ const CohortCard = ({
   return (
     <Container>
       <UpperContainer>
-        <BatchMonth>{batchMonth}</BatchMonth>
-        <BatchNumber>{batchNumber}</BatchNumber>
+        <BatchMonth>{cohortName}</BatchMonth>
+        <BatchNumber>{batchName}</BatchNumber>
       </UpperContainer>
       <LowerContainer>
         <Button primary>

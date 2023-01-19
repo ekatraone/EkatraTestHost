@@ -65,7 +65,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
     return {
       cohortName: `${currentMonth}-to-${nextMonth}`,
-      cohortBatchNumber: `Batch ${monthsCount[currentMonth] + 1}`,
+      cohortBatchNumber: `Batch${monthsCount[currentMonth] + 1}`,
     };
   };
 
@@ -102,7 +102,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   };
 
   useEffect(()=>{
-    isHavingTwoButtons && setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount)
+    setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount)
   },[])
 
   useEffect(()=>{
