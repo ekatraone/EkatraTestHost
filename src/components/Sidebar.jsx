@@ -56,14 +56,13 @@ const Sidebar = () => {
           </HeadingContainer>
         </Link>
         <NavigationMenu>
-          {navigationItems.map((item) => (
-            <Link to={item.link}>
+          {navigationItems.map((item,index) => (
+            <Link to={item.link} key={index}>
               <NavigationItem
                 active={{ main: item['link'] === currentRoute && "active" }}
-                key={item.id}
               >
                 {item.src}
-                <CustomHeading >{item.value}</CustomHeading>
+                <CustomHeading  >{item.value}</CustomHeading>
               </NavigationItem>
             </Link>
           ))}

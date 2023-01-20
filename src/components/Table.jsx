@@ -78,15 +78,18 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         Name: item.name,
         Contact: String(item.number),
         Channel: item.channel,
-        CohortName:cohortName,
-        BatchName:cohortBatchNumber
+        CohortName: cohortName,
+        BatchName: cohortBatchNumber,
       },
     }));
 
-    const data = await fetch(`https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT}`,
+    const data = await fetch(
+      `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
+        import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
+      }`,
       {
         method: "POST",
-        body: JSON.stringify({records}),
+        body: JSON.stringify({ records }),
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
           "Content-Type": "application/json",
@@ -94,20 +97,22 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       }
     );
 
-    if(data.ok){
+    if (data.ok) {
       const res = await data.json();
       console.log(res);
-      history.push("/")
+      history.push("/");
     }
   };
 
-  useEffect(()=>{
-    setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount)
-  },[])
+  useEffect(() => {
+    setMonthsCount(
+      JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
+    );
+  }, []);
 
-  useEffect(()=>{
-    window.localStorage.setItem("monthsCount",JSON.stringify(monthsCount))
-  },[monthsCount])
+  useEffect(() => {
+    window.localStorage.setItem("monthsCount", JSON.stringify(monthsCount));
+  }, [monthsCount]);
 
 
 

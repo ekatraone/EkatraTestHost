@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, User } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -34,7 +34,7 @@ const Cohorts = () => {
       counts[element.fields.BatchName] =
         (counts[element.fields.BatchName] || 0) + 1;
     }
-    
+
     // Manipulating the array and sorting it to get the required format
     const formattedCohortBatches = cohortBatches.map((element) => ({
       month: element.fields.CohortName,
@@ -69,15 +69,27 @@ const Cohorts = () => {
 
       {records.map((record) =>
         record.batches.map((batch, index) => (
-          <Link to={`/cohorts/cohort/${index}`} style={{"color":"inherit"}} >
-          <CohortCard
+          <Link
+            style={{ color: "inherit" }}
+            to={{
+              pathname: `/cohorts/cohort/${index}`,
+              state: {
+                data: JSON.stringify({
+                  batch: "Batch"+`${index + 1}`,
+                  month: record.month,
+                  user: user.sub,
+                }),
+              },
+            }}
             key={index}
-            cohortName={record.month}
-            batchName={"Batch " + `${index + 1}`}
-            totalUsers={batch[Object.keys(batch)[0]]}
-            activeUsers={batch[Object.keys(batch)[0]]}
-            openQueries="20"
-          />
+          >
+            <CohortCard
+              cohortName={record.month}
+              batchName={"Batch " + `${index + 1}`}
+              totalUsers={batch[Object.keys(batch)[0]]}
+              activeUsers={batch[Object.keys(batch)[0]]}
+              openQueries="20"
+            />
           </Link>
         ))
       )}

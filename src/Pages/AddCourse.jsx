@@ -22,8 +22,6 @@ const AddCourse = () => {
   let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
   let mediaArr = new Array(media).fill("").map((val, idx) => idx + 1);
 
-  console.log(formContent);
-
   const handleForm = (e) => {
     const valueF = e.target.value;
     const name = e.target.name;

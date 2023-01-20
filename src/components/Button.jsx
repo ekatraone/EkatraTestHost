@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const Button = ({ type, title,func,disabled }) => {
+const Button = ({ type, title,func,disabled=false }) => {
   return <Container onClick={func} type={{ main: type }} disabled={disabled} >{title}</Container>;
 };
 
