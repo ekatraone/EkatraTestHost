@@ -94,6 +94,8 @@ const AddCourse = () => {
     console.log(res2);
   };
 
+  console.log(formContent)
+
   return (
     <Container>
       <Wrapper>

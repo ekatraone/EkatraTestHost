@@ -21,7 +21,7 @@ const Cohort = () => {
     },
     { field: "status", headerName: "Status", minWidth: 200, maxWidth: 350 },
     { field: "channel", headerName: "Channel", minWidth: 250, maxWidth: 350 },
-    // { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
+    { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
 
   const rows = [

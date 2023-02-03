@@ -48,6 +48,24 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     };
   };
 
+  const handleDownloadExcel = () =>{
+    const downloadableData = rows.map((row)=>({
+      name:row.name,
+      number:row.number,
+      status:row.status,
+      channel:row.channel
+    }))
+    let binartWorkSheet = XLSX.utils.json_to_sheet(downloadableData);
+    let cohortWorkbook = XLSX.utils.book_new();
+
+    // Name your sheet
+    XLSX.utils.book_append_sheet(cohortWorkbook, binartWorkSheet, 'Binary values') 
+
+    // export your excel
+    XLSX.writeFile(cohortWorkbook, 'Cohort.xlsx'); 
+    
+  }
+
   const handleCohortName = () => {
     const formatter = new Intl.DateTimeFormat("us", { month: "short" });
     const months = Object.keys(monthsCount);
@@ -104,6 +122,8 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     }
   };
 
+
+
   useEffect(() => {
     setMonthsCount(
       JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
@@ -113,8 +133,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   useEffect(() => {
     window.localStorage.setItem("monthsCount", JSON.stringify(monthsCount));
   }, [monthsCount]);
-
-
 
   return (
     <Container
@@ -151,7 +169,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           <ButtonContainer>
             <CustomButton>
               <Download />
-              <ButtonTitle>Export CSV</ButtonTitle>
+              <ButtonTitle onClick={handleDownloadExcel} >Export CSV</ButtonTitle>
             </CustomButton>
           </ButtonContainer>
         )}

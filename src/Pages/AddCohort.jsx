@@ -17,86 +17,11 @@ const AddCohort = () => {
     { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 2,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 3,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 4,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 5,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 6,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 7,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 8,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 9,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-  ];
-
   return (
     <Container>
       <Wrapper>
         <Title>Add Cohort</Title>
-        <Table isHavingTwoButtons columns={columns} rows={rows} />
+        <Table isHavingTwoButtons columns={columns}  />
         {/* <ButtonContainer>
           <Link to="/cohorts">
             <Button title="Go Back" />

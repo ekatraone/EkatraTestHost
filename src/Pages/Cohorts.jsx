@@ -25,36 +25,49 @@ const Cohorts = () => {
         }
       ));
     const res = await data?.json();
-    const cohortBatches = res.records;
-
+    const cohortBatches = res?.records;
+    // console.log(cohortBatches);
     const counts = {};
 
-    //Get the count of total students in a particular Batch
+    // Get the count of total students in a particular Batch
     for (const element of cohortBatches) {
-      counts[element.fields.BatchName] =
-        (counts[element.fields.BatchName] || 0) + 1;
+      if (!counts[element.fields.CohortName]) {
+        counts[element.fields.CohortName] = {};
+      }
+      if (!counts[element.fields.CohortName][element.fields.BatchName]) {
+        counts[element.fields.CohortName][element.fields.BatchName] = 0;
+      }
+      counts[element.fields.CohortName][element.fields.BatchName] += 1;
     }
 
-    // Manipulating the array and sorting it to get the required format
-    const formattedCohortBatches = cohortBatches.map((element) => ({
-      month: element.fields.CohortName,
-      batches: Object.entries(counts)
-        .map(([key, value]) => ({ [key]: value }))
-        .sort((a, b) => {
-          let keyA = Object.keys(a)[0];
-          let keyB = Object.keys(b)[0];
-          if (keyA < keyB) return -1;
-          if (keyA > keyB) return 1;
-          return 0;
-        }),
+    const months = Object.keys(counts);
+    const monthsToFormat = months.map((month) => ({
+      month: month,
+      batches: counts[month],
     }));
 
-    // Converting the array into a unique array
-    const uniqueCohortBatches = formattedCohortBatches.filter(
-      (element, index, self) =>
-        self.map((i) => i.month).indexOf(element.month) === index
-    );
-    setRecords(uniqueCohortBatches);
+    const formattedResult = monthsToFormat.map((item) => {
+      return {
+        month: item.month,
+        batches: Object.keys(item.batches).map((key) => ({
+          [key]: item.batches[key],
+          //Sort Batches so that the batches are is ascending order of the time they were created
+        })).sort((a, b) => {
+          let batchA = Object.keys(a)[0];
+          let batchB = Object.keys(b)[0];
+          if (batchA > batchB) return 1;
+          if (batchA < batchB) return -1;
+          return 0;
+        })
+      };
+      //Sort the returned array Months from first map function such that earlier batches comes on Top
+    }).sort((a,b)=>{
+      let monthA = new Date(`01 ${a.month.split('-')[0]} 2000`).getTime();
+      let monthB = new Date(`01 ${b.month.split('-')[0]} 2000`).getTime();
+      return monthA - monthB;
+    })
+
+    setRecords(formattedResult);
   };
 
   useEffect(() => {
@@ -75,7 +88,7 @@ const Cohorts = () => {
               pathname: `/cohorts/cohort/${index}`,
               state: {
                 data: JSON.stringify({
-                  batch: "Batch"+`${index + 1}`,
+                  batch: "Batch" + `${index + 1}`,
                   month: record.month,
                   user: user.sub,
                 }),
