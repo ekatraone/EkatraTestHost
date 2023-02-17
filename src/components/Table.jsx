@@ -89,7 +89,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
   const handleUploadCohortFile = async (e) => {
     const { cohortName, cohortBatchNumber } = handleCohortName();
-    console.log(cohortName, cohortBatchNumber);
+    // console.log(cohortName, cohortBatchNumber);
     const records = csvData.map((item) => ({
       fields: {
         User: user.sub,
@@ -117,7 +117,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
     if (data.ok) {
       const res = await data.json();
-      console.log(res);
+      // console.log(res);
       history.push("/");
     }
   };

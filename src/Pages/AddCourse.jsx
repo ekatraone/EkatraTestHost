@@ -178,6 +178,7 @@ const AddCourse = () => {
                     Day {day}
                   </CarouselDay>
                 ))}
+                
               </CarouselDayContainer>
               <KeyboardArrowRightSharp right />
               <ActionButton onClick={handleAddDay}>
