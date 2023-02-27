@@ -19,6 +19,19 @@ const AddCourse = () => {
   const [currentDay, setCurrentDay] = useState(1);
   const [media, setMedia] = useState(1);
 
+  const [daysContent, setDaysContent] = useState({
+    day1: [
+      { media: "", paragraph: "" },
+      { media: "", paragraph: "" },
+    ],
+    day2: [{ media: "", paragraph: "" }],
+    day3: [{ media: "", paragraph: "" }],
+    day4: [{ media: "", paragraph: "" }],
+    day5: [{ media: "", paragraph: "" }],
+    day6: [{ media: "", paragraph: "" }],
+    day7: [{ media: "", paragraph: "" }],
+  });
+
   let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
   let mediaArr = new Array(media).fill("").map((val, idx) => idx + 1);
 
@@ -52,6 +65,30 @@ const AddCourse = () => {
     }
   };
 
+  const handleData = (index,e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+
+
+    setDaysContent((previousVal) => {
+      return {
+        ...previousVal,
+        ["day" + currentDay]: previousVal["day" + currentDay].map((item, idx) => {
+          if (idx === index) {
+            return {
+              ...item,
+              [name]: value,
+            };
+          } else {
+            return item;
+          }
+        }),
+      };
+    });
+
+  }  
+
+
   const handleAddDay = () => {
     setDays((previouVal) => previouVal + 1);
   };
@@ -62,8 +99,15 @@ const AddCourse = () => {
 
   const handleSingleDay = (day) => {
     setCurrentDay(day);
-    // setMedia(1)
+    !daysContent.hasOwnProperty("day" + day) &&
+      setDaysContent((previouVal) => {
+        return {
+          ...previouVal,
+          ["day" + day]: [{ media: "", paragraph: "" }],
+        };
+      });
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,14 +123,16 @@ const AddCourse = () => {
     const res = await fetch(
       `https://api.airtable.com/v0/meta/bases/${
         import.meta.env.VITE_AIRTABLE_BASE_ID
-}/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
+      }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${
+            import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
+          }`,
           "Content-Type": "application/json",
         },
-        data:data,
+        data: data,
       }
     );
     console.log(res);
@@ -94,7 +140,7 @@ const AddCourse = () => {
     console.log(res2);
   };
 
-  console.log(formContent)
+  // console.log(formContent);
 
   return (
     <Container>
@@ -165,6 +211,10 @@ const AddCourse = () => {
               </FilterContainer>
             </RightContainer>
           </TopContainer>
+          {/* make the BottomContainer in such a way that each CarouselDay has its
+          own CourseContentContainer and on click of each day the
+          CourseContentContainer becomes active for each CarouselDay */}
+
           <BottomContainer>
             <Carousel>
               <KeyboardArrowLeftSharp />
@@ -178,7 +228,6 @@ const AddCourse = () => {
                     Day {day}
                   </CarouselDay>
                 ))}
-                
               </CarouselDayContainer>
               <KeyboardArrowRightSharp right />
               <ActionButton onClick={handleAddDay}>
@@ -187,20 +236,22 @@ const AddCourse = () => {
               </ActionButton>
             </Carousel>
             <CourseContentContainer>
-              {mediaArr.map((media) => (
-                <CourseContentWrapper key={media}>
+              {daysContent["day" + currentDay].map((dayContent,index) => (
+                <CourseContentWrapper key={index}>
                   <ParagraphContainer>
                     <TextField
                       label="Paragraph"
                       variant="outlined"
                       required
                       color="primary"
+                      value={dayContent.paragraph}
                       multiline
                       fullWidth
-                      name={"paragraph" + media}
+                      name={`paragraph`}
+                      
                       rows={4}
                       margin="normal"
-                      onChange={handleForm}
+                      onChange={(event)=>handleData(index,event)}
                     />
                   </ParagraphContainer>
                   <MediaContainer>
@@ -210,9 +261,10 @@ const AddCourse = () => {
                       required
                       color="primary"
                       fullWidth
+                      value={dayContent.media}
                       margin="normal"
-                      name={"media" + media}
-                      onChange={handleForm}
+                      name={`media`}
+                      onChange={(event)=>handleData(index,event)}
                     />
                     <UploadOutlined />
                   </MediaContainer>
@@ -383,6 +435,7 @@ const ActionButton = styled.div`
     color: #fff;
   }
 `;
+
 const ActionButtonTitle = styled.span``;
 const CourseContentContainer = styled.div`
   width: 100%;
