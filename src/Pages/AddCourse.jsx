@@ -7,33 +7,33 @@ import {
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
+import Airtable from "airtable";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const AddCourse = () => {
-  const [formContent, setFormContent] = useState({
-    days: {},
-  });
+  const [formContent, setFormContent] = useState({});
   const [days, setDays] = useState(7);
   const [currentDay, setCurrentDay] = useState(1);
-  const [media, setMedia] = useState(1);
 
   const [daysContent, setDaysContent] = useState({
-    day1: [
-      { media: "", paragraph: "" },
-      { media: "", paragraph: "" },
-    ],
-    day2: [{ media: "", paragraph: "" }],
-    day3: [{ media: "", paragraph: "" }],
-    day4: [{ media: "", paragraph: "" }],
-    day5: [{ media: "", paragraph: "" }],
-    day6: [{ media: "", paragraph: "" }],
-    day7: [{ media: "", paragraph: "" }],
+    day1: [{ paragraph: "", media: "" }],
+    day2: [{ paragraph: "", media: "" }],
+    day3: [{ paragraph: "", media: "" }],
+    day4: [{ paragraph: "", media: "" }],
+    day5: [{ paragraph: "", media: "" }],
+    day6: [{ paragraph: "", media: "" }],
+    day7: [{ paragraph: "", media: "" }],
   });
 
+  const { user } = useAuth0();
+  const history = useHistory();
+
+
+
   let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
-  let mediaArr = new Array(media).fill("").map((val, idx) => idx + 1);
 
   const handleForm = (e) => {
     const valueF = e.target.value;
@@ -65,36 +65,45 @@ const AddCourse = () => {
     }
   };
 
-  const handleData = (index,e) => {
+  const handleData = (index, e) => {
     const value = e.target.value;
     const name = e.target.name;
-
 
     setDaysContent((previousVal) => {
       return {
         ...previousVal,
-        ["day" + currentDay]: previousVal["day" + currentDay].map((item, idx) => {
-          if (idx === index) {
-            return {
-              ...item,
-              [name]: value,
-            };
-          } else {
-            return item;
+        ["day" + currentDay]: previousVal["day" + currentDay].map(
+          (item, idx) => {
+            if (idx === index) {
+              return {
+                ...item,
+                [name]: value,
+              };
+            } else {
+              return item;
+            }
           }
-        }),
+        ),
       };
     });
+  };
 
-  }  
-
+  console.log(formContent);
 
   const handleAddDay = () => {
     setDays((previouVal) => previouVal + 1);
   };
 
-  const handleMedia = () => {
-    setMedia((previouVal) => previouVal + 1);
+  const handleAddParagraph = () => {
+    setDaysContent((previousVal) => {
+      return {
+        ...previousVal,
+        ["day" + currentDay]: [
+          ...previousVal["day" + currentDay],
+          { media: "", paragraph: "" },
+        ],
+      };
+    });
   };
 
   const handleSingleDay = (day) => {
@@ -108,36 +117,46 @@ const AddCourse = () => {
       });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     //TODO: Make a POST request to the server
     console.log("clicked");
 
-    const data = JSON.stringify({
-      description: "Whether I have visited this apartment yet.",
-      name: "Visited8",
-      type: "singleLineText",
-    });
-
-    const res = await fetch(
-      `https://api.airtable.com/v0/meta/bases/${
-        import.meta.env.VITE_AIRTABLE_BASE_ID
-      }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${
-            import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
-          }`,
-          "Content-Type": "application/json",
+    try {
+      const records = {
+        "fields": {
+          "CourseName": formContent.courseName,
+          "InstructorName": formContent.instructorName,
+          "Desc": formContent.desc,
+          "Category": formContent.category,
+          "Language": formContent.language,
+          "Days": JSON.stringify(daysContent),
+          "User": user.sub,
         },
-        data: data,
+      };
+
+      const data = await fetch(
+        `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
+          import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
+        }`,
+        {
+          method: "POST",
+          body: JSON.stringify(records),
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (data.ok) {
+        const res = await data.json();
+        console.log(res);
+        history.push("/");
       }
-    );
-    console.log(res);
-    const res2 = await res.json();
-    console.log(res2);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // console.log(formContent);
@@ -236,7 +255,7 @@ const AddCourse = () => {
               </ActionButton>
             </Carousel>
             <CourseContentContainer>
-              {daysContent["day" + currentDay].map((dayContent,index) => (
+              {daysContent["day" + currentDay].map((dayContent, index) => (
                 <CourseContentWrapper key={index}>
                   <ParagraphContainer>
                     <TextField
@@ -248,10 +267,9 @@ const AddCourse = () => {
                       multiline
                       fullWidth
                       name={`paragraph`}
-                      
                       rows={4}
                       margin="normal"
-                      onChange={(event)=>handleData(index,event)}
+                      onChange={(event) => handleData(index, event)}
                     />
                   </ParagraphContainer>
                   <MediaContainer>
@@ -264,13 +282,13 @@ const AddCourse = () => {
                       value={dayContent.media}
                       margin="normal"
                       name={`media`}
-                      onChange={(event)=>handleData(index,event)}
+                      onChange={(event) => handleData(index, event)}
                     />
                     <UploadOutlined />
                   </MediaContainer>
                 </CourseContentWrapper>
               ))}
-              <ActionButton two onClick={handleMedia}>
+              <ActionButton two onClick={handleAddParagraph}>
                 <AddCircleOutlineOutlined />
                 <ActionButtonTitle>Add Paragraph</ActionButtonTitle>
               </ActionButton>
