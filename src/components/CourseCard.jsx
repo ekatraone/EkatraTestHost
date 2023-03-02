@@ -7,8 +7,7 @@ import React, {  useState } from "react";
 import styled from "styled-components";
 
 const CourseCard = ({ title, desc, src }) => {
-  const [elipses, setElipses] = useState(true);
-
+  const [elipses, setElipses] = useState(desc.length > 100 ? true : false);
 
   return (
     <Container>

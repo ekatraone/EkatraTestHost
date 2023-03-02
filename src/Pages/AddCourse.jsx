@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
-import Airtable from "airtable";
+
 import { useAuth0 } from "@auth0/auth0-react";
 
 const AddCourse = () => {
@@ -30,8 +30,6 @@ const AddCourse = () => {
 
   const { user } = useAuth0();
   const history = useHistory();
-
-
 
   let daysArr = new Array(days).fill("").map((val, idx) => idx + 1);
 
@@ -65,7 +63,7 @@ const AddCourse = () => {
     }
   };
 
-  const handleData = (index, e) => {
+  const handleDaysData = (index, e) => {
     const value = e.target.value;
     const name = e.target.name;
 
@@ -122,19 +120,19 @@ const AddCourse = () => {
     //TODO: Make a POST request to the server
     console.log("clicked");
 
-    try {
-      const records = {
-        "fields": {
-          "CourseName": formContent.courseName,
-          "InstructorName": formContent.instructorName,
-          "Desc": formContent.desc,
-          "Category": formContent.category,
-          "Language": formContent.language,
-          "Days": JSON.stringify(daysContent),
-          "User": user.sub,
-        },
-      };
+    const records = {
+      fields: {
+        CourseName: formContent.courseName,
+        InstructorName: formContent.instructorName,
+        Desc: formContent.desc,
+        Category: formContent.category,
+        Language: formContent.language,
+        Days: JSON.stringify(daysContent),
+        User: user.sub,
+      },
+    };
 
+    try {
       const data = await fetch(
         `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
           import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
@@ -157,6 +155,96 @@ const AddCourse = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    // const fields = Object.entries(daysContent).reduce((acc, [day, items]) => {
+    //   const dayFields = items.reduce((fieldsAcc, item, index) => {
+    //     const { paragraph, media } = item;
+    //     const paragraphKey = `${day}_paragraph${index + 1}`;
+    //     const mediaKey = `${day}_media${index + 1}`;
+    //     return {
+    //       ...fieldsAcc,
+    //       [paragraphKey]: paragraph || "",
+    //       [mediaKey]: media || "",
+    //     };
+    //   }, {});
+    //   return { ...acc, ...dayFields };
+    // }, {});
+
+    // console.log(fields);
+    // const data = JSON.stringify(fields);
+    // console.log(data);
+
+    let fields = Object.entries(daysContent).flatMap(([day, records]) =>
+      records.flatMap((record, i) =>
+        Object.entries(record).map(([key, value]) => ({
+          name: `${day}_${key}${i + 1}`,
+          type: "singleLineText",
+        }))
+      )
+    );
+
+    console.log(fields);
+
+    // // take fields and take each field.name and return me a single object where the keys are the field.name and the value is daysContent[day][key][i-1]
+    // const data = Object.entries(daysContent).flatMap(([day, records]) =>
+
+
+    (async () => {
+      for await (let field of fields) {
+        const body = JSON.stringify(field);
+        try {
+          const data = await fetch(
+            `https://api.airtable.com/v0/meta/bases/${
+              import.meta.env.VITE_AIRTABLE_BASE_ID
+            }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
+            {
+              method: "POST",
+              body: body,
+              headers: {
+                Authorization: `Bearer ${
+                  import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
+                }`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (data.ok) {
+            const res = await data.json();
+            console.log(res);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    })();
+
+    // const body = JSON.stringify({
+    //   name: "Visited81111111",
+    //   type: "singleLineText",
+    // });
+    // const res = await fetch(
+    //   `https://api.airtable.com/v0/meta/bases/${
+    //     import.meta.env.VITE_AIRTABLE_BASE_ID
+    //   }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
+    //   {
+    //     method: "POST",
+    //     body: body,
+    //     headers: {
+    //       Authorization: `Bearer ${
+    //         import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
+    //       }`,
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    // console.log(res);
+
+    // const res2 = await res.json();
+    // console.log(res2);
   };
 
   // console.log(formContent);
@@ -269,7 +357,7 @@ const AddCourse = () => {
                       name={`paragraph`}
                       rows={4}
                       margin="normal"
-                      onChange={(event) => handleData(index, event)}
+                      onChange={(event) => handleDaysData(index, event)}
                     />
                   </ParagraphContainer>
                   <MediaContainer>
@@ -282,7 +370,7 @@ const AddCourse = () => {
                       value={dayContent.media}
                       margin="normal"
                       name={`media`}
-                      onChange={(event) => handleData(index, event)}
+                      onChange={(event) => handleDaysData(index, event)}
                     />
                     <UploadOutlined />
                   </MediaContainer>
@@ -299,6 +387,7 @@ const AddCourse = () => {
               <Button title="Cancel" />
             </Link>
             <Button func={handleSubmit} title="Add Course" type="Primary" />
+            {/* <Button func={handleSubmit2} title="Add Course" type="Primary" /> */}
           </ButtonContainer>
         </Form>
       </Wrapper>
