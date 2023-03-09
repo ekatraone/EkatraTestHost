@@ -13,15 +13,11 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import base from "./api/base";
 import { useAuth0 } from "@auth0/auth0-react";
-
-const KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
 
 function App() {
   const [records, setRecords] = useState([]);
-  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
-    useAuth0();
+  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
   const getRecords = async () => {
     const data = await fetch(
       `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${

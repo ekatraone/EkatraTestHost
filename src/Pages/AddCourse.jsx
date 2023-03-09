@@ -124,7 +124,6 @@ const AddCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     //TODO: Make a POST request to the server
-    console.log("clicked");
 
     const records = {
       fields: {
