@@ -87,6 +87,7 @@ function App() {
 
             <Route path="/courses/addcourse" component={AddCourse} />
             <Route exact path="/courses" component={Courses} />
+            <Route path="/courses/course/:id" component={AddCourse} />
 
             <Route path="/cohorts/cohort/:id" component={Cohort} />
             <Route path="/cohorts/addcohort" component={AddCohort} />

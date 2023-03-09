@@ -3,19 +3,25 @@ import {
   SignalCellularAltOutlined,
   Groups2Outlined,
 } from "@mui/icons-material";
-import React, {  useState } from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-const CourseCard = ({ title, desc, src }) => {
+const CourseCard = ({ src,record }) => {
+
+  const {id, fields:{CourseName:title, Desc:desc} } = record;
   const [elipses, setElipses] = useState(desc.length > 100 ? true : false);
 
   return (
-    <Container>
+    <Container key={id}>
       <UpperContainer>
         <InfoContainer>
           <InfoTitle>{title}</InfoTitle>
 
-          <InfoDesc elipses={{main:elipses}} onClick={() => setElipses((oldValue) => !oldValue)}>
+          <InfoDesc
+            elipses={{ main: elipses }}
+            onClick={() => setElipses((oldValue) => !oldValue)}
+          >
             {desc}
           </InfoDesc>
         </InfoContainer>
@@ -24,8 +30,13 @@ const CourseCard = ({ title, desc, src }) => {
 
       <LowerContainer>
         <Button primary>
-          <EditOutlined />
-          <ButtonTitle>Edit Course</ButtonTitle>
+          <Link to={{
+            pathname:`/courses/course/${id}`,
+            state: JSON.stringify(record)
+          }} style={{ color: "inherit", display:'flex',alignItems:'center' }}>
+            <EditOutlined />
+            <ButtonTitle>Edit Course</ButtonTitle>
+          </Link>
         </Button>
 
         <Button secondary>
@@ -63,14 +74,13 @@ const InfoContainer = styled.div`
   position: relative;
 `;
 const InfoTitle = styled.h4`
-  font-weight:700;
-  font-size:24px;
-  margin-bottom:0.2rem;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 0.2rem;
 `;
 const InfoDesc = styled.p`
-
-  color:#939393;
-  font-size:16px;
+  color: #939393;
+  font-size: 16px;
   max-width: 17rem;
   overflow: hidden;
   display: -webkit-box !important;
@@ -83,7 +93,7 @@ const InfoDesc = styled.p`
     top: 89px;
     color: #227c9d;
     cursor: pointer;
-    opacity:${(props) => props.elipses.main ? 1 : 0};
+    opacity: ${(props) => (props.elipses.main ? 1 : 0)};
   }
 `;
 const Image = styled.img`
@@ -116,7 +126,7 @@ const Button = styled.div`
   padding: 0.6rem;
   border-radius: 0.4rem;
   cursor: pointer;
-  max-width:30%;
+  max-width: 30%;
 `;
 const ButtonTitle = styled.span``;
 

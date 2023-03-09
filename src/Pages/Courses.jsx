@@ -31,6 +31,7 @@ const Courses = () => {
     user && getRecords();
   }, []);
 
+
   return (
     <Container>
       <Link to="/courses/addcourse">
@@ -39,23 +40,27 @@ const Courses = () => {
 
       {records.map((record) => {
         return (
-          <CourseCard
-            title={record.fields.CourseName}
-            desc={record.fields.Desc}
-            // src={`/images/${record.fields.CourseName}.svg`}
-            src="/images/Programming.svg"
-          />
+          <>
+            <CourseCard
+              title={record.fields.CourseName}
+              desc={record.fields.Desc}
+              // src={`/images/${record.fields.CourseName}.svg`}
+              src="/images/Programming.svg"
+              record={record}
+              key={record.id}
+            />
+          </>
         );
       })}
 
-      <CourseCard
+      {/* <CourseCard
         title="Programming"
         desc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
             aliquam sunt voluptatum ut sed cupiditate. Lorem ipsum dolor sit
             amet consectetur adipisicing elit. Ducimus aliquam sunt voluptatum
             ut sed cupiditate."
         src="/images/Programming.svg"
-      />
+      /> */}
     </Container>
   );
 };

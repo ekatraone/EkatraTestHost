@@ -6,8 +6,8 @@ import {
 } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
 
@@ -16,7 +16,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 const AddCourse = () => {
   const [formContent, setFormContent] = useState({});
   const [days, setDays] = useState(7);
+
   const [currentDay, setCurrentDay] = useState(1);
+
+  const location = useLocation();
+  const id = location.pathname.split("/")[3];
+  let courseContent = ""
+
+  typeof(location.state) === "string" && (courseContent = JSON.parse(location.state))
 
   const [daysContent, setDaysContent] = useState({
     day1: [{ paragraph: "", media: "" }],
@@ -36,23 +43,6 @@ const AddCourse = () => {
   const handleForm = (e) => {
     const valueF = e.target.value;
     const name = e.target.name;
-
-    if (name.includes("paragraph") || name.includes("media")) {
-      setFormContent(
-        (value) =>
-          (value = {
-            ...value,
-            days: {
-              ...value.days,
-              ["day" + currentDay]: {
-                ...value.days["day" + currentDay],
-                [name]: valueF,
-                // [name]: valueF,
-              },
-            },
-          })
-      );
-    } else {
       setFormContent(
         (value) =>
           (value = {
@@ -60,8 +50,26 @@ const AddCourse = () => {
             [name]: valueF,
           })
       );
-    }
   };
+
+  const categoryOptions = useMemo(() => {
+    return [
+      { value: "Selected", label: "Select a Category" },
+      { value: "Programming", label: "Programming" },
+      { value: "WildLife", label: "WildLife" },
+      { value: "Environment", label: "Environment" },
+
+    ];
+  }, []);
+
+  const LanguageOptions = useMemo(() => {
+    return [
+      { value: "Selected", label: "Select a Language" },
+      { value: "English", label: "English" },
+      { value: "Hindi", label: "Hindi" },
+      { value: "Marathi", label: "Marathi" },
+    ]
+  }, [])
 
   const handleDaysData = (index, e) => {
     const value = e.target.value;
@@ -85,8 +93,6 @@ const AddCourse = () => {
       };
     });
   };
-
-  console.log(formContent);
 
   const handleAddDay = () => {
     setDays((previouVal) => previouVal + 1);
@@ -156,6 +162,46 @@ const AddCourse = () => {
       console.log(error);
     }
   };
+  
+  const handleUpdate = async (e) =>{
+    e.preventDefault();
+    const records = {
+      fields: {
+        CourseName: formContent.courseName,
+        InstructorName: formContent.instructorName,
+        Desc: formContent.desc,
+        Category: formContent.category,
+        Language: formContent.language,
+        Days: JSON.stringify(daysContent),
+        User: user.sub,
+      },
+    };
+    try {
+      const data = await fetch(
+        `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
+          import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
+        }/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(records),
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (data.ok) {
+        const res = await data.json();
+        console.log(res);
+        history.push("/courses");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
@@ -187,10 +233,6 @@ const AddCourse = () => {
     );
 
     console.log(fields);
-
-    // // take fields and take each field.name and return me a single object where the keys are the field.name and the value is daysContent[day][key][i-1]
-    // const data = Object.entries(daysContent).flatMap(([day, records]) =>
-
 
     (async () => {
       for await (let field of fields) {
@@ -247,7 +289,24 @@ const AddCourse = () => {
     // console.log(res2);
   };
 
-  // console.log(formContent);
+  useEffect(() => {
+    if (id) {
+      let daysData;
+      typeof courseContent?.fields?.Days === "string" && (daysData = JSON.parse(courseContent?.fields?.Days))
+      // console.log(daysData);
+      setDaysContent(daysData);
+      setFormContent({
+        courseName: courseContent?.fields.CourseName,
+        instructorName: courseContent?.fields.InstructorName,
+        desc: courseContent?.fields.Desc,
+        category: courseContent?.fields.Category,
+        language: courseContent?.fields.Language,
+      });
+    }
+  }, []);
+
+  console.log(formContent);
+  console.log(daysContent);
 
   return (
     <Container>
@@ -265,6 +324,7 @@ const AddCourse = () => {
                 fullWidth
                 margin="normal"
                 onChange={handleForm}
+                value={formContent.courseName ? formContent.courseName : ""}
               />
               <TextField
                 label="Brief Description"
@@ -276,6 +336,7 @@ const AddCourse = () => {
                 multiline
                 rows={4}
                 onChange={handleForm}
+                value={formContent.desc ? formContent.desc : ""}
               />
             </LeftContainer>
             <RightContainer>
@@ -287,31 +348,29 @@ const AddCourse = () => {
                 fullWidth
                 margin="normal"
                 onChange={handleForm}
+                value={formContent.instructorName ? formContent.instructorName : ""}
               />
               <FilterContainer>
                 <Filter>
                   <SingleFilterContainer>
                     <FilterText>Category</FilterText>
-
                     <Select name="category" onChange={handleForm} required>
-                      <Option disabled selected>
-                        Select Category
-                      </Option>
-                      <Option>Programming</Option>
-                      <Option>WildLife</Option>
-                      <Option>green</Option>
+                      {
+                        categoryOptions.map((option,index) => (
+                          <Option key={index} selected={id ? formContent.category === option.value : option.value === "Selected" }>{option.label}</Option>
+                        ))
+                      }
                     </Select>
                   </SingleFilterContainer>
 
                   <SingleFilterContainer>
                     <FilterText>Language</FilterText>
                     <Select name="language" onChange={handleForm} required>
-                      <Option disabled selected>
-                        Language
-                      </Option>
-                      <Option>Hindi</Option>
-                      <Option>English</Option>
-                      <Option>Marathi</Option>
+                    {
+                        LanguageOptions.map((option,index) => (
+                          <Option key={index} selected={id ? formContent.language === option.value : option.value === "Selected" }>{option.label}</Option>
+                        ))
+                      }
                     </Select>
                   </SingleFilterContainer>
                 </Filter>
@@ -343,7 +402,7 @@ const AddCourse = () => {
               </ActionButton>
             </Carousel>
             <CourseContentContainer>
-              {daysContent["day" + currentDay].map((dayContent, index) => (
+              {daysContent["day" + currentDay]?.map((dayContent, index) => (
                 <CourseContentWrapper key={index}>
                   <ParagraphContainer>
                     <TextField
@@ -386,8 +445,12 @@ const AddCourse = () => {
             <Link to="/courses">
               <Button title="Cancel" />
             </Link>
-            <Button func={handleSubmit} title="Add Course" type="Primary" />
-            {/* <Button func={handleSubmit2} title="Add Course" type="Primary" /> */}
+            {
+              id ? 
+              <Button func={handleUpdate} title="Update Course" type="Primary" />
+              :
+              <Button func={handleSubmit} title="Add Course" type="Primary" />
+            }
           </ButtonContainer>
         </Form>
       </Wrapper>
