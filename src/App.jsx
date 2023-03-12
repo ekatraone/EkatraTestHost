@@ -13,13 +13,10 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import LandingPage from "./Pages/LandingPage";
+import Loading from "./components/Loading";
 
 function App() {
-  const { user, isLoading, isAuthenticated } = useAuth0();
-  // :TODO
-  // If user is there then we will redirect to a home page else we will redirect to the Landing Page
-
-  console.log(isAuthenticated);
+  const { user, isLoading } = useAuth0();
 
   return (
     <Router>
@@ -42,8 +39,7 @@ function App() {
             </Section>
           </Container>
         ) : isLoading ? (
-          // :TODO add a Loading Component
-          <div>...Loading</div>
+          <Loading />
         ) : (
           <LandingPage />
         )}

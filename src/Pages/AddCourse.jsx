@@ -113,9 +113,9 @@ const AddCourse = () => {
   const handleSingleDay = (day) => {
     setCurrentDay(day);
     !daysContent.hasOwnProperty("day" + day) &&
-      setDaysContent((previouVal) => {
+      setDaysContent((previousVal) => {
         return {
-          ...previouVal,
+          ...previousVal,
           ["day" + day]: [{ media: "", paragraph: "" }],
         };
       });
