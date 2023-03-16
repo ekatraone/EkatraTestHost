@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   SearchOutlined,
@@ -12,23 +12,8 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Navbar = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
-    useAuth0();
-
-  const getUsersFromAuth0 = async () => {
-    await fetch("https://dev-uuiq5z2b4mju62wb.us.auth0.com/api/v2/users", {
-      method:"GET",
-      headers: {authorization: `Bearer ${import.meta.env.VITE_AUTH0_MGMT_API_ACCESS_TOKEN}`}
-    }).then(res=>console.log(res));
-  }
-
-  useEffect(() => {
-    //:TODO check if Authenticated and if yes then in airtable try to find the person with user.sub, if exists return the object and if doesnot exist upload data into the airtable.
-    isAuthenticated && getUsersFromAuth0
-
-  }, [user]);
-
-  // console.log(user)
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+  const [showLogOut, setShowLogOut] = useState(false);
 
   return (
     <Container>
@@ -38,40 +23,37 @@ const Navbar = () => {
       </LeftContainer>
 
       <RightContainer>
-        {isAuthenticated ? (
-          <>
+        <ActionContainer>
+          <Link to="/courses/addcourse">
+            <ActionButton>
+              <AddCircleOutlineOutlined />
+              <ActionButtonTitle>Create Course</ActionButtonTitle>
+            </ActionButton>
+          </Link>
+
+          <CalendarMonthOutlined />
+          <NotificationsOutlined />
+        </ActionContainer>
+
+        <EducatorContainer onClick={() => setShowLogOut((val) => !val)}>
+          {/* <EducatorContainer onMouseEnter={() => setShowLogOut(true)}> */}
+          <Partition></Partition>
+          <Avatar src={user?.picture} />
+          <EducatorDetailsContainer>
             <ActionButton
               onClick={() => logout({ returnTo: window.location.origin })}
+              showLogOut={showLogOut}
+              logout
             >
               <ActionButtonTitle>Logout</ActionButtonTitle>
             </ActionButton>
-            <ActionContainer>
-              <Link to="/courses/addcourse">
-                <ActionButton>
-                  <AddCircleOutlineOutlined />
-                  <ActionButtonTitle>Create Course</ActionButtonTitle>
-                </ActionButton>
-              </Link>
-
-              <CalendarMonthOutlined />
-              <NotificationsOutlined />
-            </ActionContainer>
-
-            <EducatorContainer>
-              <Partition></Partition>
-              <Avatar src={user?.picture} />
-              <EducatorDetailsContainer>
-                <EducatorName>{user?.given_name ? user?.given_name : user?.nickname  }</EducatorName>
-                {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
-              </EducatorDetailsContainer>
-            </EducatorContainer>
-            <MoreVertOutlined />
-          </>
-        ) : (
-          <ActionButton onClick={() => loginWithRedirect()}>
-            <ActionButtonTitle>Login</ActionButtonTitle>
-          </ActionButton>
-        )}
+            <EducatorName>
+              {user?.given_name ? user?.given_name : user?.nickname}
+            </EducatorName>
+            {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
+          </EducatorDetailsContainer>
+        </EducatorContainer>
+        <MoreVertOutlined />
       </RightContainer>
     </Container>
   );
@@ -122,6 +104,7 @@ const RightContainer = styled.div`
   flex-basis: 30rem;
   justify-content: flex-end;
   gap: 2px;
+  position: relative;
 `;
 
 const ActionContainer = styled.div`
@@ -149,6 +132,19 @@ const ActionButton = styled.div`
     margin-right: 0.3rem;
     color: #fff;
   }
+
+  display: ${(props) => props.logout && "none"};
+
+  ${(props) =>
+    props.showLogOut &&
+    `
+    position: absolute;
+    right: 32px;
+    top: 52px;
+    display: block;
+
+    
+  `}
 `;
 const ActionButtonTitle = styled.span``;
 

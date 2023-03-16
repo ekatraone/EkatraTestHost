@@ -1,7 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import Button from "../components/Button";
 import Table from "../components/Table";
 
 const AddCohort = () => {
@@ -10,11 +8,10 @@ const AddCohort = () => {
     {
       field: "number",
       headerName: "Contact Number",
-      minWidth: 300,
-      maxWidth: 350,
+      minWidth: 400,
+      maxWidth: 450,
     },
-    { field: "channel", headerName: "Channel", minWidth: 300, maxWidth: 350 },
-    { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
+    { field: "channel", headerName: "Channel", minWidth: 400, maxWidth: 450 },
   ];
 
   return (

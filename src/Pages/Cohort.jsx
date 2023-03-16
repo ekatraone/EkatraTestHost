@@ -19,87 +19,14 @@ const Cohort = () => {
       minWidth: 200,
       maxWidth: 350,
     },
-    { field: "status", headerName: "Status", minWidth: 200, maxWidth: 350 },
-    { field: "channel", headerName: "Channel", minWidth: 250, maxWidth: 350 },
-    { field: "edit", headerName: "Edit", minWidth: 200, maxWidth: 300 },
+    { field: "status", headerName: "Status", minWidth: 300, maxWidth: 350 },
+    { field: "channel", headerName: "Channel", minWidth: 350, maxWidth: 350 },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 2,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 3,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 4,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 5,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 6,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 7,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 8,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-    {
-      id: 9,
-      name: "Jon",
-      number: "+" + 918930113390,
-      status: 4,
-      channel: "WhatsApp",
-      edit: "EDIT / DELETE",
-    },
-  ];
+
 
   const getRecords = async () => {
+    console.log(user, month, batch)
     const data = await fetch(
       `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
         import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
@@ -116,6 +43,7 @@ const Cohort = () => {
       id: record.id,
       name: record.fields.Name,
       number: "+" + record.fields.Contact,
+      // Change Status from here
       status: 4,
       channel: record.fields.Channel,
     }));

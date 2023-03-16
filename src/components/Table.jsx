@@ -4,9 +4,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Download, Upload } from "@mui/icons-material";
 import { useState } from "react";
 import Button from "./Button";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import * as XLSX from "xlsx/xlsx.mjs";
-import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 
@@ -14,7 +13,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   const { user } = useAuth0();
   const history = useHistory();
 
-  const [csvFile, setCsvFile] = useState();
   const [csvData, setCsvData] = useState([]);
 
   const [monthsCount, setMonthsCount] = useState({
@@ -34,6 +32,15 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
   const handleExcelFile = (e) => {
     const reader = new FileReader();
+    let fileName = e.target.files[0].name;
+    let allowedExtensions =
+      /(\.xlsx|\.xlsm|\.xlsb|\.xltx|\.xltm|\.xls|\.xlt)$/i;
+    if (!allowedExtensions.exec(fileName)) {
+      alert("Please upload file having extensions .xlsx/.xls only.");
+      e.target.value = "";
+      return false;
+    }
+
     reader.readAsBinaryString(e.target.files[0]);
     reader.onload = (e) => {
       const text = e.target.result;
@@ -42,29 +49,42 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         let rowObject = XLSX.utils.sheet_to_row_object_array(
           workbook.Sheets[sheet]
         );
-        // console.table(rowObject);
-        setCsvData(rowObject);
+        if (
+          rowObject[0].id &&
+          rowObject[0].name &&
+          rowObject[0].number &&
+          rowObject[0].channel
+        ) {
+          setCsvData(rowObject);
+        }
+        else {
+          alert("Please upload the file provided in the sample format");
+          return false
+        }
       });
     };
   };
 
-  const handleDownloadExcel = () =>{
-    const downloadableData = rows.map((row)=>({
-      name:row.name,
-      number:row.number,
-      status:row.status,
-      channel:row.channel
-    }))
+  const handleDownloadExcel = () => {
+    const downloadableData = rows.map((row) => ({
+      name: row.name,
+      number: row.number,
+      status: row.status,
+      channel: row.channel,
+    }));
     let binartWorkSheet = XLSX.utils.json_to_sheet(downloadableData);
     let cohortWorkbook = XLSX.utils.book_new();
 
     // Name your sheet
-    XLSX.utils.book_append_sheet(cohortWorkbook, binartWorkSheet, 'Binary values') 
+    XLSX.utils.book_append_sheet(
+      cohortWorkbook,
+      binartWorkSheet,
+      "Binary values"
+    );
 
     // export your excel
-    XLSX.writeFile(cohortWorkbook, 'Cohort.xlsx'); 
-    
-  }
+    XLSX.writeFile(cohortWorkbook, "Cohort.xlsx");
+  };
 
   const handleCohortName = () => {
     const formatter = new Intl.DateTimeFormat("us", { month: "short" });
@@ -122,8 +142,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     }
   };
 
-
-
   useEffect(() => {
     setMonthsCount(
       JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
@@ -169,7 +187,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           <ButtonContainer>
             <CustomButton>
               <Download />
-              <ButtonTitle onClick={handleDownloadExcel} >Export CSV</ButtonTitle>
+              <ButtonTitle onClick={handleDownloadExcel}>
+                Export CSV
+              </ButtonTitle>
             </CustomButton>
           </ButtonContainer>
         )}
