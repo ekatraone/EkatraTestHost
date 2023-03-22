@@ -10,6 +10,7 @@ const Cohorts = () => {
 
   const { user } = useAuth0();
 
+  // DONE, send user sub 
   const getRecords = async () => {
     const data =
       user &&

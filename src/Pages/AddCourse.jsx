@@ -137,6 +137,7 @@ const AddCourse = () => {
       },
     };
 
+    // DONE, send Records in Body
     try {
       const data = await fetch(
         `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
@@ -175,6 +176,7 @@ const AddCourse = () => {
         User: user.sub,
       },
     };
+    //DONE, send Record in Body
     try {
       const data = await fetch(
         `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${

@@ -10,6 +10,7 @@ const Courses = () => {
 
   const { user } = useAuth0();
 
+  //DONE: send user in header
   const getRecords = async () => {
     const data = await fetch(
       `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${

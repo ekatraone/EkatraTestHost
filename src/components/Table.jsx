@@ -121,6 +121,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       },
     }));
 
+    //DONE
     const data = await fetch(
       `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
         import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
