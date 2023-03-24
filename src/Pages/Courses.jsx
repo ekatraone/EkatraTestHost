@@ -12,26 +12,26 @@ const Courses = () => {
 
   //DONE: send user in header
   const getRecords = async () => {
-    const data = await fetch(
-      `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-        import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
-      }?filterByFormula=User%3D'${user?.sub}'`,
+    //INTEGRATED
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCourses`,
       {
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+          user: user?.sub,
         },
-        mode: "cors",
       }
     );
-    const res = await data?.json();
-
-    setRecords(res.records);
+    if (!response.ok) {
+      throw new Error("Something went wrong");
+    }
+    const data = await response.json();
+    
+    setRecords(data);
   };
 
   useEffect(() => {
     user && getRecords();
   }, []);
-
 
   return (
     <Container>

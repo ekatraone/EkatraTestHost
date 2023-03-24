@@ -10,24 +10,27 @@ const Cohorts = () => {
 
   const { user } = useAuth0();
 
-  // DONE, send user sub 
+  // DONE, send user sub
   const getRecords = async () => {
-    const data =
+    const response =
       user &&
       (await fetch(
-        `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-          import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
-        }?filterByFormula=User%3D'${user?.sub}'`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
         {
           headers: {
             Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+            user: user.sub,
           },
           mode: "cors",
         }
       ));
-    const res = await data?.json();
-    const cohortBatches = res?.records;
-    // console.log(cohortBatches);
+
+    if (!response.ok){
+      throw new Error("Something went wrong");
+    }
+
+    const cohortBatches = await response.json();
+;
     const counts = {};
 
     // Get the count of total students in a particular Batch
@@ -47,26 +50,30 @@ const Cohorts = () => {
       batches: counts[month],
     }));
 
-    const formattedResult = monthsToFormat.map((item) => {
-      return {
-        month: item.month,
-        batches: Object.keys(item.batches).map((key) => ({
-          [key]: item.batches[key],
-          //Sort Batches so that the batches are is ascending order of the time they were created
-        })).sort((a, b) => {
-          let batchA = Object.keys(a)[0];
-          let batchB = Object.keys(b)[0];
-          if (batchA > batchB) return 1;
-          if (batchA < batchB) return -1;
-          return 0;
-        })
-      };
-      //Sort the returned array Months from first map function such that earlier batches comes on Top
-    }).sort((a,b)=>{
-      let monthA = new Date(`01 ${a.month.split('-')[0]} 2000`).getTime();
-      let monthB = new Date(`01 ${b.month.split('-')[0]} 2000`).getTime();
-      return monthA - monthB;
-    })
+    const formattedResult = monthsToFormat
+      .map((item) => {
+        return {
+          month: item.month,
+          batches: Object.keys(item.batches)
+            .map((key) => ({
+              [key]: item.batches[key],
+              //Sort Batches so that the batches are is ascending order of the time they were created
+            }))
+            .sort((a, b) => {
+              let batchA = Object.keys(a)[0];
+              let batchB = Object.keys(b)[0];
+              if (batchA > batchB) return 1;
+              if (batchA < batchB) return -1;
+              return 0;
+            }),
+        };
+        //Sort the returned array Months from first map function such that earlier batches comes on Top
+      })
+      .sort((a, b) => {
+        let monthA = new Date(`01 ${a.month.split("-")[0]} 2000`).getTime();
+        let monthB = new Date(`01 ${b.month.split("-")[0]} 2000`).getTime();
+        return monthA - monthB;
+      });
 
     setRecords(formattedResult);
   };

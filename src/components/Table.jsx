@@ -56,10 +56,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           rowObject[0].channel
         ) {
           setCsvData(rowObject);
-        }
-        else {
+        } else {
           alert("Please upload the file provided in the sample format");
-          return false
+          return false;
         }
       });
     };
@@ -123,12 +122,10 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
     //DONE
     const data = await fetch(
-      `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-        import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
-      }`,
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/createCohort`,
       {
         method: "POST",
-        body: JSON.stringify({ records }),
+        body: JSON.stringify(records),
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
           "Content-Type": "application/json",
@@ -138,7 +135,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
     if (data.ok) {
       const res = await data.json();
-      // console.log(res);
+      console.log(res);
       history.push("/");
     }
   };

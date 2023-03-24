@@ -9,7 +9,7 @@ const Cohort = () => {
   const { batch, month, user } = JSON.parse(location.state?.data);
   const [records, setRecords] = useState([]);
 
-  const history = useHistory()
+  const history = useHistory();
 
   const columns = [
     { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
@@ -23,40 +23,44 @@ const Cohort = () => {
     { field: "channel", headerName: "Channel", minWidth: 350, maxWidth: 350 },
   ];
 
-
-
   //DONE
   const getRecords = async () => {
-    console.log(user, month, batch)
-    const data = await fetch(
-      `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-        import.meta.env.VITE_AIRTABLE_TABLE_NAME_COHORT
-      }?filterByFormula=AND({User}='${user}',{CohortName}='${month}',{BatchName}='${batch}')`,
-      {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
-        },
-        mode: "cors",
-      }
-    );
-    const res = await data.json();
-    const rows = res.records?.map((record) => ({
-      id: record.id,
-      name: record.fields.Name,
-      number: "+" + record.fields.Contact,
-      // Change Status from here
-      status: 4,
-      channel: record.fields.Channel,
-    }));
-    setRecords(rows);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohort`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+            user: user,
+            month,
+            batch,
+          },
+          mode: "cors",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      const rows = data.map((record) => ({
+        id: record.id,
+        name: record.fields.Name,
+        number: "+" + record.fields.Contact,
+        // Change Status from here
+        status: 4,
+        channel: record.fields.Channel,
+      }));
+      setRecords(rows);
+    } catch (error) {
+      setRecords([]);
+      throw new Error("Something went wrong");
+    }
   };
 
   useEffect(() => {
     getRecords();
   }, []);
 
-  const handleNavigation = () =>{
-    history.goBack()
+  const handleNavigation = () => {
+    history.goBack();
   };
 
   return (

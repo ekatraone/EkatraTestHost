@@ -21,9 +21,10 @@ const AddCourse = () => {
 
   const location = useLocation();
   const id = location.pathname.split("/")[3];
-  let courseContent = ""
+  let courseContent = "";
 
-  typeof(location.state) === "string" && (courseContent = JSON.parse(location.state))
+  typeof location.state === "string" &&
+    (courseContent = JSON.parse(location.state));
 
   const [daysContent, setDaysContent] = useState({
     day1: [{ paragraph: "", media: "" }],
@@ -43,13 +44,13 @@ const AddCourse = () => {
   const handleForm = (e) => {
     const valueF = e.target.value;
     const name = e.target.name;
-      setFormContent(
-        (value) =>
-          (value = {
-            ...value,
-            [name]: valueF,
-          })
-      );
+    setFormContent(
+      (value) =>
+        (value = {
+          ...value,
+          [name]: valueF,
+        })
+    );
   };
 
   const categoryOptions = useMemo(() => {
@@ -58,7 +59,6 @@ const AddCourse = () => {
       { value: "Programming", label: "Programming" },
       { value: "WildLife", label: "WildLife" },
       { value: "Environment", label: "Environment" },
-
     ];
   }, []);
 
@@ -68,8 +68,8 @@ const AddCourse = () => {
       { value: "English", label: "English" },
       { value: "Hindi", label: "Hindi" },
       { value: "Marathi", label: "Marathi" },
-    ]
-  }, [])
+    ];
+  }, []);
 
   const handleDaysData = (index, e) => {
     const value = e.target.value;
@@ -139,10 +139,8 @@ const AddCourse = () => {
 
     // DONE, send Records in Body
     try {
-      const data = await fetch(
-        `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-          import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
-        }`,
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/createCourse`,
         {
           method: "POST",
           body: JSON.stringify(records),
@@ -153,17 +151,19 @@ const AddCourse = () => {
         }
       );
 
-      if (data.ok) {
-        const res = await data.json();
-        console.log(res);
-        history.push("/");
+      console.log(response);
+      if (!response.ok) {
+        throw new Error("Something went wrong");
       }
+      const data = await response.json();
+      console.log(data);
+      history.push("/courses");
     } catch (error) {
       console.log(error);
     }
   };
-  
-  const handleUpdate = async (e) =>{
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
     const records = {
       fields: {
@@ -178,31 +178,27 @@ const AddCourse = () => {
     };
     //DONE, send Record in Body
     try {
-      const data = await fetch(
-        `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${
-          import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID
-        }/${id}`,
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/updateCourse`,
         {
           method: "PATCH",
           body: JSON.stringify(records),
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
+            id: id,
             "Content-Type": "application/json",
           },
         }
       );
 
-      if (data.ok) {
-        const res = await data.json();
-        console.log(res);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
         history.push("/courses");
       }
     } catch (error) {
       console.log(error);
     }
-
-  }
-
+  };
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
@@ -293,7 +289,8 @@ const AddCourse = () => {
   useEffect(() => {
     if (id) {
       let daysData;
-      typeof courseContent?.fields?.Days === "string" && (daysData = JSON.parse(courseContent?.fields?.Days))
+      typeof courseContent?.fields?.Days === "string" &&
+        (daysData = JSON.parse(courseContent?.fields?.Days));
       // console.log(daysData);
       setDaysContent(daysData);
       setFormContent({
@@ -349,29 +346,45 @@ const AddCourse = () => {
                 fullWidth
                 margin="normal"
                 onChange={handleForm}
-                value={formContent.instructorName ? formContent.instructorName : ""}
+                value={
+                  formContent.instructorName ? formContent.instructorName : ""
+                }
               />
               <FilterContainer>
                 <Filter>
                   <SingleFilterContainer>
                     <FilterText>Category</FilterText>
                     <Select name="category" onChange={handleForm} required>
-                      {
-                        categoryOptions.map((option,index) => (
-                          <Option key={index} selected={id ? formContent.category === option.value : option.value === "Selected" }>{option.label}</Option>
-                        ))
-                      }
+                      {categoryOptions.map((option, index) => (
+                        <Option
+                          key={index}
+                          selected={
+                            id
+                              ? formContent.category === option.value
+                              : option.value === "Selected"
+                          }
+                        >
+                          {option.label}
+                        </Option>
+                      ))}
                     </Select>
                   </SingleFilterContainer>
 
                   <SingleFilterContainer>
                     <FilterText>Language</FilterText>
                     <Select name="language" onChange={handleForm} required>
-                    {
-                        LanguageOptions.map((option,index) => (
-                          <Option key={index} selected={id ? formContent.language === option.value : option.value === "Selected" }>{option.label}</Option>
-                        ))
-                      }
+                      {LanguageOptions.map((option, index) => (
+                        <Option
+                          key={index}
+                          selected={
+                            id
+                              ? formContent.language === option.value
+                              : option.value === "Selected"
+                          }
+                        >
+                          {option.label}
+                        </Option>
+                      ))}
                     </Select>
                   </SingleFilterContainer>
                 </Filter>
@@ -446,12 +459,15 @@ const AddCourse = () => {
             <Link to="/courses">
               <Button title="Cancel" />
             </Link>
-            {
-              id ? 
-              <Button func={handleUpdate} title="Update Course" type="Primary" />
-              :
+            {id ? (
+              <Button
+                func={handleUpdate}
+                title="Update Course"
+                type="Primary"
+              />
+            ) : (
               <Button func={handleSubmit} title="Add Course" type="Primary" />
-            }
+            )}
           </ButtonContainer>
         </Form>
       </Wrapper>
