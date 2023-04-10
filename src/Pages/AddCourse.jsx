@@ -309,7 +309,7 @@ const AddCourse = () => {
   return (
     <Container>
       <Wrapper>
-        <Title>New Course</Title>
+        <Title>{id ? "Update Course" : "New Course"}</Title>
         <Form noValidate autoComplete="off">
           <TopContainer>
             <LeftContainer>

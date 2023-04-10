@@ -14,6 +14,8 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   const history = useHistory();
 
   const [csvData, setCsvData] = useState([]);
+  const [coursesName, setCoursesName] = useState([]);
+  const [courseSelected,setCourseSelected] = useState("");
 
   const [monthsCount, setMonthsCount] = useState({
     Jan: 0,
@@ -117,6 +119,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         Channel: item.channel,
         CohortName: cohortName,
         BatchName: cohortBatchNumber,
+        Course: courseSelected,
       },
     }));
 
@@ -140,6 +143,27 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     }
   };
 
+  const getCoursesName = async () => {
+    //INTEGRATED
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCoursesName`,
+      {
+        headers: {
+          user: user?.sub,
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Something went wrong");
+    }
+    const data = await response.json();
+    setCoursesName(data);
+  };
+
+  useEffect(() => {
+    getCoursesName();
+  },[])
+
   useEffect(() => {
     setMonthsCount(
       JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
@@ -158,6 +182,21 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         <TableHeading>Learners</TableHeading>
         {isHavingTwoButtons && (
           <ButtonContainer>
+            <SingleFilterContainer>
+              <Select name="language"  required onChange = {(e)=> setCourseSelected(e.target.value) }>
+                  <Option
+                  disabled
+                  selected
+                  >
+                    {"Select a Course for this Cohort"}
+                  </Option>
+                  {
+                    coursesName.length > 0 && coursesName.map((course,index) => (
+                      <Option value={course} key={index} >{course}</Option>
+                    ))
+                  }
+              </Select>
+            </SingleFilterContainer>
             <CustomButton sample>
               <Download />
               <ButtonTitleDownload
@@ -280,6 +319,27 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin: 0.6rem 1.3rem;
+  align-items: center;
+`;
+
+const SingleFilterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 0.5rem;
+`;
+
+
+
+
+const Select = styled.select`
+  padding: 8px;
+  width: 15rem;
+  border: 1px solid #17C3B2;
+  border-radius: 5px;
+`;
+const Option = styled.option`
+  /* color:#C4C4C4; */
 `;
 
 export default Table;
