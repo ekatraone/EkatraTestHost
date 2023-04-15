@@ -14,8 +14,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   const history = useHistory();
 
   const [csvData, setCsvData] = useState([]);
+  const [csvFileName, setCsvFileName] = useState("");
   const [coursesName, setCoursesName] = useState([]);
-  const [courseSelected,setCourseSelected] = useState("");
+  const [courseSelected, setCourseSelected] = useState("");
 
   const [monthsCount, setMonthsCount] = useState({
     Jan: 0,
@@ -35,6 +36,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   const handleExcelFile = (e) => {
     const reader = new FileReader();
     let fileName = e.target.files[0].name;
+    setCsvFileName(fileName);
     let allowedExtensions =
       /(\.xlsx|\.xlsm|\.xlsb|\.xltx|\.xltm|\.xls|\.xlt)$/i;
     if (!allowedExtensions.exec(fileName)) {
@@ -47,6 +49,11 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     reader.onload = (e) => {
       const text = e.target.result;
       let workbook = XLSX.read(text, { type: "binary" });
+      if (workbook.SheetNames.length > 1) {
+        alert("Please upload the file provided in the sample format");
+        setCsvFileName("");
+        return;
+      }
       workbook.SheetNames.forEach((sheet) => {
         let rowObject = XLSX.utils.sheet_to_row_object_array(
           workbook.Sheets[sheet]
@@ -57,10 +64,15 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
           rowObject[0].number &&
           rowObject[0].channel
         ) {
-          setCsvData(rowObject);
+          const uniqueRows = rowObject.filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.number === item.number)
+          );
+          setCsvData(uniqueRows);
         } else {
           alert("Please upload the file provided in the sample format");
-          return false;
+          setCsvFileName("");
+          return;
         }
       });
     };
@@ -76,7 +88,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     let binartWorkSheet = XLSX.utils.json_to_sheet(downloadableData);
     let cohortWorkbook = XLSX.utils.book_new();
 
-    // Name your sheet
     XLSX.utils.book_append_sheet(
       cohortWorkbook,
       binartWorkSheet,
@@ -91,6 +102,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     const formatter = new Intl.DateTimeFormat("us", { month: "short" });
     const months = Object.keys(monthsCount);
     const currentMonth = formatter.format();
+
     const nextMonth =
       months[
         months.indexOf(currentMonth) + 1 > 11
@@ -110,7 +122,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
   const handleUploadCohortFile = async (e) => {
     const { cohortName, cohortBatchNumber } = handleCohortName();
-    // console.log(cohortName, cohortBatchNumber);
     const records = csvData.map((item) => ({
       fields: {
         User: user.sub,
@@ -123,7 +134,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       },
     }));
 
-    //DONE
     const data = await fetch(
       `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/createCohort`,
       {
@@ -144,7 +154,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   };
 
   const getCoursesName = async () => {
-    //INTEGRATED
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCoursesName`,
       {
@@ -162,7 +171,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
 
   useEffect(() => {
     getCoursesName();
-  },[])
+  }, []);
 
   useEffect(() => {
     setMonthsCount(
@@ -183,18 +192,21 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         {isHavingTwoButtons && (
           <ButtonContainer>
             <SingleFilterContainer>
-              <Select name="language"  required onChange = {(e)=> setCourseSelected(e.target.value) }>
-                  <Option
-                  disabled
-                  selected
-                  >
-                    {"Select a Course for this Cohort"}
-                  </Option>
-                  {
-                    coursesName.length > 0 && coursesName.map((course,index) => (
-                      <Option value={course} key={index} >{course}</Option>
-                    ))
-                  }
+              <Select
+                name="language"
+                required
+                onChange={(e) => setCourseSelected(e.target.value)}
+                defaultValue="disabled"
+              >
+                <Option disabled value="disabled">
+                  {"Select a Course for this Cohort"}
+                </Option>
+                {coursesName.length > 0 &&
+                  coursesName.map((course, index) => (
+                    <Option value={course} key={index}>
+                      {course}
+                    </Option>
+                  ))}
               </Select>
             </SingleFilterContainer>
             <CustomButton sample>
@@ -218,6 +230,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
                 Upload CSV
               </ButtonTitle>
             </CustomButton>
+            {/* {
+              csvFileName && <div style={{"position":"absolute","top":"40px","right":"50px"}} >{csvFileName}</div>
+            } */}
           </ButtonContainer>
         )}
         {isHavingOneButton && (
@@ -250,7 +265,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
             func={handleUploadCohortFile}
             title="Add Cohort"
             type="Primary"
-            disabled={csvData.length > 0 ? false : true}
+            disabled={csvData.length > 0  ? courseSelected ? false : true : true  }
           />
         </ButtonContainer>
       )}
@@ -320,6 +335,7 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   margin: 0.6rem 1.3rem;
   align-items: center;
+  position: relative;
 `;
 
 const SingleFilterContainer = styled.div`
@@ -329,13 +345,10 @@ const SingleFilterContainer = styled.div`
   margin-right: 0.5rem;
 `;
 
-
-
-
 const Select = styled.select`
   padding: 8px;
   width: 15rem;
-  border: 1px solid #17C3B2;
+  border: 1px solid #17c3b2;
   border-radius: 5px;
 `;
 const Option = styled.option`
