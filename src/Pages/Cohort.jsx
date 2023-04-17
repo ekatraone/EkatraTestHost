@@ -30,7 +30,6 @@ const Cohort = () => {
         `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohort`,
         {
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
             user: user,
             month,
             batch,

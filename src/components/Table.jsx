@@ -140,7 +140,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         method: "POST",
         body: JSON.stringify(records),
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
       }

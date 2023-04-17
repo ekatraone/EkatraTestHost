@@ -10,7 +10,6 @@ const Courses = () => {
 
   const { user } = useAuth0();
 
-  //DONE: send user in header
   const getRecords = async () => {
     //INTEGRATED
     const response = await fetch(

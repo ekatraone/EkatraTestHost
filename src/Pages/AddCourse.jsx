@@ -243,9 +243,7 @@ const AddCourse = () => {
               method: "POST",
               body: body,
               headers: {
-                Authorization: `Bearer ${
-                  import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
-                }`,
+
                 "Content-Type": "application/json",
               },
             }

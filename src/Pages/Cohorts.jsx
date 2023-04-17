@@ -18,7 +18,6 @@ const Cohorts = () => {
         `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
         {
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_KEY}`,
             user: user.sub,
           },
           mode: "cors",
