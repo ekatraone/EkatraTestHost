@@ -53,14 +53,7 @@ const Courses = () => {
         );
       })}
 
-      {/* <CourseCard
-        title="Programming"
-        desc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
-            aliquam sunt voluptatum ut sed cupiditate. Lorem ipsum dolor sit
-            amet consectetur adipisicing elit. Ducimus aliquam sunt voluptatum
-            ut sed cupiditate."
-        src="/images/Programming.svg"
-      /> */}
+
     </Container>
   );
 };

@@ -19,15 +19,7 @@ const AddCohort = () => {
       <Wrapper>
         <Title>Add Cohort</Title>
         <Table isHavingTwoButtons columns={columns}  />
-        {/* <ButtonContainer>
-          <Link to="/cohorts">
-            <Button title="Go Back" />
-          </Link>
-          <Button
-            title="Add Cohort"
-            type="Primary"
-          />
-        </ButtonContainer> */}
+
       </Wrapper>
     </Container>
   );

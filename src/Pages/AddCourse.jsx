@@ -5,7 +5,6 @@ import {
   UploadOutlined,
 } from "@mui/icons-material";
 import { TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -199,89 +198,7 @@ const AddCourse = () => {
     }
   };
 
-  const handleSubmit2 = async (e) => {
-    e.preventDefault();
-    // const fields = Object.entries(daysContent).reduce((acc, [day, items]) => {
-    //   const dayFields = items.reduce((fieldsAcc, item, index) => {
-    //     const { paragraph, media } = item;
-    //     const paragraphKey = `${day}_paragraph${index + 1}`;
-    //     const mediaKey = `${day}_media${index + 1}`;
-    //     return {
-    //       ...fieldsAcc,
-    //       [paragraphKey]: paragraph || "",
-    //       [mediaKey]: media || "",
-    //     };
-    //   }, {});
-    //   return { ...acc, ...dayFields };
-    // }, {});
 
-    // console.log(fields);
-    // const data = JSON.stringify(fields);
-    // console.log(data);
-
-    let fields = Object.entries(daysContent).flatMap(([day, records]) =>
-      records.flatMap((record, i) =>
-        Object.entries(record).map(([key, value]) => ({
-          name: `${day}_${key}${i + 1}`,
-          type: "singleLineText",
-        }))
-      )
-    );
-
-    console.log(fields);
-
-    (async () => {
-      for await (let field of fields) {
-        const body = JSON.stringify(field);
-        try {
-          const data = await fetch(
-            `https://api.airtable.com/v0/meta/bases/${
-              import.meta.env.VITE_AIRTABLE_BASE_ID
-            }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
-            {
-              method: "POST",
-              body: body,
-              headers: {
-
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          if (data.ok) {
-            const res = await data.json();
-            console.log(res);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    })();
-
-    // const body = JSON.stringify({
-    //   name: "Visited81111111",
-    //   type: "singleLineText",
-    // });
-    // const res = await fetch(
-    //   `https://api.airtable.com/v0/meta/bases/${
-    //     import.meta.env.VITE_AIRTABLE_BASE_ID
-    //   }/tables/${import.meta.env.VITE_AIRTABLE_COURSE_TABLE_ID}/fields`,
-    //   {
-    //     method: "POST",
-    //     body: body,
-    //     headers: {
-    //       Authorization: `Bearer ${
-    //         import.meta.env.VITE_AIRTABLE_PERSONAL_ACCESS_TOKEN
-    //       }`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-
-    // console.log(res);
-
-    // const res2 = await res.json();
-    // console.log(res2);
-  };
 
   useEffect(() => {
     if (id) {

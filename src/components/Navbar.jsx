@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import {
   SearchOutlined,
@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Navbar = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+  const { logout, user } = useAuth0();
   const [showLogOut, setShowLogOut] = useState(false);
 
   return (
@@ -36,7 +36,6 @@ const Navbar = () => {
         </ActionContainer>
 
         <EducatorContainer onClick={() => setShowLogOut((val) => !val)}>
-          {/* <EducatorContainer onMouseEnter={() => setShowLogOut(true)}> */}
           <Partition></Partition>
           <Avatar src={user?.picture} />
           <EducatorDetailsContainer>
@@ -50,7 +49,6 @@ const Navbar = () => {
             <EducatorName>
               {user?.given_name ? user?.given_name : user?.nickname}
             </EducatorName>
-            {/* <EducatorSpecialization>Data Scientist</EducatorSpecialization> */}
           </EducatorDetailsContainer>
         </EducatorContainer>
         <MoreVertOutlined />

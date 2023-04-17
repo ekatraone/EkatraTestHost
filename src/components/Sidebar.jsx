@@ -17,12 +17,12 @@ const Sidebar = () => {
       link: "/",
       id:1
     },
-    {
-      value: "Analytics",
-      src: <SignalCellularAltOutlinedIcon />,
-      link: "/2",
-      id:1
-    },
+    // {
+    //   value: "Analytics",
+    //   src: <SignalCellularAltOutlinedIcon />,
+    //   link: "/2",
+    //   id:2
+    // },
     {
       value: "Courses",
       src: <Groups2OutlinedIcon />,
@@ -37,13 +37,12 @@ const Sidebar = () => {
       id:4
 
     },
-    {
-      value: "Live Courses",
-      src: <CameraOutdoorOutlinedIcon />,
-      link: "/3",
-      id:5
-
-    },
+    // {
+    //   value: "Live Courses",
+    //   src: <CameraOutdoorOutlinedIcon />,
+    //   link: "/3",
+    //   id:5
+    // },
   ]);
 
   return (
