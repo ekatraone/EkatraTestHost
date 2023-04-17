@@ -1,6 +1,5 @@
 import {
   ArrowDownwardSharp,
-  ArrowUpward,
   ArrowUpwardSharp,
 } from "@mui/icons-material";
 import React from "react";
@@ -11,8 +10,8 @@ const Card = ({ title, statsNum, statsDen, statsPercent, isPositive,img }) => {
     <Container>
       <CardTitle>{title}</CardTitle>
       <CardStatsContainer>
-        <CardStats color={!isPositive && "#FE6D73"}>{statsDen ? statsNum + "/" + statsDen : statsNum}</CardStats>
-        <CardPercentChange color={!isPositive && "#FE6D73"}>
+        <CardStats color={!isPositive ? "#FE6D73" :null }>{statsDen ? statsNum + "/" + statsDen : statsNum}</CardStats>
+        <CardPercentChange color={!isPositive ? "#FE6D73" : null}>
           {statsPercent + "%"}
           {isPositive ? <ArrowUpwardSharp /> : <ArrowDownwardSharp />}
         </CardPercentChange>
