@@ -149,12 +149,12 @@ const AddCourse = () => {
         }
       );
 
-      console.log(response);
+      // console.log(response);
       if (!response.ok) {
         throw new Error("Something went wrong");
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       history.push("/courses");
     } catch (error) {
       console.log(error);
@@ -190,7 +190,7 @@ const AddCourse = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         history.push("/courses");
       }
     } catch (error) {
@@ -217,8 +217,8 @@ const AddCourse = () => {
     }
   }, []);
 
-  console.log(formContent);
-  console.log(daysContent);
+  // console.log(formContent);
+  // console.log(daysContent);
 
   return (
     <Container>
