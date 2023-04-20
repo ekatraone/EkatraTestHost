@@ -154,6 +154,7 @@ const AddCourse = () => {
         throw new Error("Something went wrong");
       }
       const data = await response.json();
+      alert("Course Added Successfully");
       // console.log(data);
       history.push("/courses");
     } catch (error) {
@@ -190,6 +191,7 @@ const AddCourse = () => {
 
       if (response.ok) {
         const data = await response.json();
+        alert("Course Updated Successfully");
         // console.log(data);
         history.push("/courses");
       }
