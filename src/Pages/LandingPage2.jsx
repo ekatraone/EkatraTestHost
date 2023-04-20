@@ -10,15 +10,12 @@ const LandingPage = () => {
 
   return (
     <Container>
-        {/* create a box in the middle and write Educator Login and then add a Login Button */}
         <Box>
             <Heading>Educator Login</Heading>
             <ActionButton onClick={() => loginWithRedirect()}>
                 <ActionButtonTitle>Login</ActionButtonTitle>
             </ActionButton>
         </Box>
-
-
     </Container>
   );
 };
@@ -40,7 +37,7 @@ const Box = styled.div`
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    width: 30%;
+    min-width: 30%;
     height: 20%;
     border-radius: 1rem;
     box-shadow: 0 0 0.5rem 0.1rem #000000;
