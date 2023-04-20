@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import LandingPage from "./Pages/LandingPage";
+import LandingPage2 from "./Pages/LandingPage2";
 import Loading from "./components/Loading";
 
 function App() {
@@ -41,7 +42,8 @@ function App() {
         ) : isLoading ? (
           <Loading />
         ) : (
-          <LandingPage />
+          // <LandingPage />
+          <LandingPage2 />
         )}
       </Switch>
     </Router>
