@@ -177,7 +177,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     setMonthsCount(
       // JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
       JSON.parse(window.localStorage.getItem("monthsCount")) ? JSON.parse(window.localStorage.getItem("monthsCount")) :  monthsCount
-
     );
   }, []);
 

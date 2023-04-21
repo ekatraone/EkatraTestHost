@@ -6,8 +6,6 @@ import Feature from "../components/Feature";
 const LandingPage = () => {
   const { loginWithRedirect } = useAuth0();
 
-
-
   return (
     <Container>
         <Box>
