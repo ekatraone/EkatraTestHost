@@ -1,7 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React from "react";
 import styled from "styled-components";
-import Feature from "../components/Feature";
 
 const LandingPage = () => {
   const { loginWithRedirect } = useAuth0();
@@ -36,7 +35,7 @@ const Box = styled.div`
     justify-content: center;
     background-color: #fff;
     min-width: 30%;
-    height: 20%;
+    min-height: 20%;
     border-radius: 1rem;
     box-shadow: 0 0 0.5rem 0.1rem #000000;
     padding: 1rem;
@@ -44,8 +43,8 @@ const Box = styled.div`
 
 const Heading = styled.p`
     font-size: 2rem;
-    letter-spacing: 0.4rem;
-    font-weight: 600;
+    letter-spacing: 0.2rem;
+    font-weight: 700;
     color: #cda63c;
 `;
 

@@ -219,9 +219,6 @@ const AddCourse = () => {
     }
   }, []);
 
-  // console.log(formContent);
-  // console.log(daysContent);
-
   return (
     <Container>
       <Wrapper>

@@ -95,7 +95,7 @@ const Cohorts = () => {
               pathname: `/cohorts/cohort/${index}`,
               state: {
                 data: JSON.stringify({
-                  batch: "Batch" + `${index + 1}`,
+                  batch: `Batch + ${index + 1}`,
                   month: record.month,
                   user: user.sub,
                 }),
@@ -105,7 +105,7 @@ const Cohorts = () => {
           >
             <CohortCard
               cohortName={record.month}
-              batchName={"Batch " + `${index + 1}`}
+              batchName={`Batch + ${index + 1}`}
               totalUsers={batch[Object.keys(batch)[0]]}
               activeUsers={batch[Object.keys(batch)[0]]}
               openQueries="20"

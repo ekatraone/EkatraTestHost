@@ -163,11 +163,6 @@ const EducatorName = styled.span`
   font-weight: 600;
   font-size: 16px;
 `;
-const EducatorSpecialization = styled.span`
-  color: #c4c4c4;
-  font-weight: 400;
-  font-size: 12px;
-`;
-const DottedDiv = styled.div``;
+
 
 export default Navbar;
