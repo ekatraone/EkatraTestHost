@@ -11,21 +11,24 @@ const Courses = () => {
   const { user } = useAuth0();
 
   const getRecords = async () => {
-    //INTEGRATED
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCourses`,
-      {
-        headers: {
-          user: user?.sub,
-        },
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCourses`,
+        {
+          headers: {
+            user: user?.sub,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Something went wrong");
       }
-    );
-    if (!response.ok) {
-      throw new Error("Something went wrong");
+      const data = await response.json();
+
+      setRecords(data);
+    } catch (error) {
+      console.log(error);
     }
-    const data = await response.json();
-    
-    setRecords(data);
   };
 
   useEffect(() => {
@@ -52,8 +55,6 @@ const Courses = () => {
           </>
         );
       })}
-
-
     </Container>
   );
 };

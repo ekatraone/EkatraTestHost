@@ -134,39 +134,47 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       },
     }));
 
-    const data = await fetch(
-      `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/createCohort`,
-      {
-        method: "POST",
-        body: JSON.stringify(records),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      const data = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/createCohort`,
+        {
+          method: "POST",
+          body: JSON.stringify(records),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (data.ok) {
-      const res = await data.json();
-      // console.log(res);
-      alert("Cohort created successfully");
-      history.push("/");
+      if (data.ok) {
+        const res = await data.json();
+        // console.log(res);
+        alert("Cohort created successfully");
+        history.push("/");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const getCoursesName = async () => {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCoursesName`,
-      {
-        headers: {
-          user: user?.sub,
-        },
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/getCoursesName`,
+        {
+          headers: {
+            user: user?.sub,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Something went wrong");
       }
-    );
-    if (!response.ok) {
-      throw new Error("Something went wrong");
+      const data = await response.json();
+      setCoursesName(data);
+    } catch (error) {
+      console.log(error);
     }
-    const data = await response.json();
-    setCoursesName(data);
   };
 
   useEffect(() => {
@@ -179,9 +187,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     //   JSON.parse(window.localStorage.getItem("monthsCount")) ? JSON.parse(window.localStorage.getItem("monthsCount")) :  monthsCount
     // );
 
-
-    window.localStorage.getItem("monthsCount")  ? setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount"))) : setMonthsCount(monthsCount)
-
+    window.localStorage.getItem("monthsCount")
+      ? setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")))
+      : setMonthsCount(monthsCount);
   }, []);
 
   useEffect(() => {
@@ -270,7 +278,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
             func={handleUploadCohortFile}
             title="Add Cohort"
             type="Primary"
-            disabled={csvData.length > 0  ? courseSelected ? false : true : true  }
+            disabled={
+              csvData.length > 0 ? (courseSelected ? false : true) : true
+            }
           />
         </ButtonContainer>
       )}

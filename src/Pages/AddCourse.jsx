@@ -136,7 +136,6 @@ const AddCourse = () => {
       },
     };
 
-    // DONE, send Records in Body
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/createCourse`,
@@ -175,7 +174,6 @@ const AddCourse = () => {
         User: user.sub,
       },
     };
-    //DONE, send Record in Body
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/courses/updateCourse`,

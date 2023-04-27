@@ -1,4 +1,4 @@
-import { useAuth0, User } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -12,69 +12,72 @@ const Cohorts = () => {
 
   // DONE, send user sub
   const getRecords = async () => {
-    const response =
-      user &&
-      (await fetch(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
-        {
-          headers: {
-            user: user.sub,
-          },
-          mode: "cors",
+    try {
+      const response =
+        user &&
+        (await fetch(
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
+          {
+            headers: {
+              user: user.sub,
+            },
+            mode: "cors",
+          }
+        ));
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+
+      const cohortBatches = await response?.json();
+      const counts = {};
+
+      // Get the count of total students in a particular Batch
+      for (const element of cohortBatches) {
+        if (!counts[element.fields.CohortName]) {
+          counts[element.fields.CohortName] = {};
         }
-      ));
-
-    if (!response.ok){
-      throw new Error("Something went wrong");
-    }
-
-    const cohortBatches = await response.json();
-;
-    const counts = {};
-
-    // Get the count of total students in a particular Batch
-    for (const element of cohortBatches) {
-      if (!counts[element.fields.CohortName]) {
-        counts[element.fields.CohortName] = {};
+        if (!counts[element.fields.CohortName][element.fields.BatchName]) {
+          counts[element.fields.CohortName][element.fields.BatchName] = 0;
+        }
+        counts[element.fields.CohortName][element.fields.BatchName] += 1;
       }
-      if (!counts[element.fields.CohortName][element.fields.BatchName]) {
-        counts[element.fields.CohortName][element.fields.BatchName] = 0;
-      }
-      counts[element.fields.CohortName][element.fields.BatchName] += 1;
-    }
 
-    const months = Object.keys(counts);
-    const monthsToFormat = months.map((month) => ({
-      month: month,
-      batches: counts[month],
-    }));
+      const months = Object.keys(counts);
+      const monthsToFormat = months.map((month) => ({
+        month: month,
+        batches: counts[month],
+      }));
 
-    const formattedResult = monthsToFormat
-      .map((item) => {
-        return {
-          month: item.month,
-          batches: Object.keys(item.batches)
-            .map((key) => ({
-              [key]: item.batches[key],
-              //Sort Batches so that the batches are is ascending order of the time they were created
-            }))
-            .sort((a, b) => {
-              let batchA = Object.keys(a)[0];
-              let batchB = Object.keys(b)[0];
-              if (batchA > batchB) return 1;
-              if (batchA < batchB) return -1;
-              return 0;
-            }),
-        };
+      const formattedResult = monthsToFormat
+        .map((item) => {
+          return {
+            month: item.month,
+            batches: Object.keys(item.batches)
+              .map((key) => ({
+                [key]: item.batches[key],
+                //Sort Batches so that the batches are is ascending order of the time they were created
+              }))
+              .sort((a, b) => {
+                let batchA = Object.keys(a)[0];
+                let batchB = Object.keys(b)[0];
+                if (batchA > batchB) return 1;
+                if (batchA < batchB) return -1;
+                return 0;
+              }),
+          };
+        })
         //Sort the returned array Months from first map function such that earlier batches comes on Top
-      })
-      .sort((a, b) => {
-        let monthA = new Date(`01 ${a.month.split("-")[0]} 2000`).getTime();
-        let monthB = new Date(`01 ${b.month.split("-")[0]} 2000`).getTime();
-        return monthA - monthB;
-      });
+        .sort((a, b) => {
+          let monthA = new Date(`01 ${a.month.split("-")[0]} 2000`).getTime();
+          let monthB = new Date(`01 ${b.month.split("-")[0]} 2000`).getTime();
+          return monthA - monthB;
+        });
 
-    setRecords(formattedResult);
+      setRecords(formattedResult);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
