@@ -15,7 +15,7 @@ const Cohorts = () => {
     try {
       const response =
         user &&
-        (await fetch(
+        await fetch(
           `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
           {
             headers: {
@@ -23,13 +23,14 @@ const Cohorts = () => {
             },
             mode: "cors",
           }
-        ));
+        );
 
       if (!response.ok) {
         throw new Error("Something went wrong");
       }
 
       const cohortBatches = await response?.json();
+      console.log(cohortBatches);
       const counts = {};
 
       // Get the count of total students in a particular Batch

@@ -149,6 +149,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       if (data.ok) {
         const res = await data.json();
         // console.log(res);
+        console.log(res)
         alert("Cohort created successfully");
         history.push("/");
       }
@@ -171,6 +172,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         throw new Error("Something went wrong");
       }
       const data = await response.json();
+      console.log(data)
       setCoursesName(data);
     } catch (error) {
       console.log(error);

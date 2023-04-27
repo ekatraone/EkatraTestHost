@@ -38,7 +38,7 @@ const Cohort = () => {
         }
       );
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       const rows = data.map((record) => ({
         id: record.id,
         name: record.fields.Name,
