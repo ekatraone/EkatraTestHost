@@ -35,7 +35,7 @@ const CourseCard = ({ src,record }) => {
             state: JSON.stringify(record)
           }} style={{ color: "inherit", display:'flex',alignItems:'center' }}>
             <EditOutlined />
-            <ButtonTitle>Edit Course</ButtonTitle>
+            <ButtonTitle onClick={()=>{  console.log(record); console.log(src);}}>Edit Course</ButtonTitle>
           </Link>
         </Button>
 

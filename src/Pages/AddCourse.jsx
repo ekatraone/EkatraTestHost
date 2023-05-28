@@ -3,18 +3,26 @@ import {
   KeyboardArrowLeftSharp,
   KeyboardArrowRightSharp,
   UploadOutlined,
+  FolderOpenOutlined,
+  PreviewOutlined,
+  Close,
 } from "@mui/icons-material";
 import { TextField } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef, useDebugValue } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/Button";
-
+import Done from "../assets/Done.gif";
 import { useAuth0 } from "@auth0/auth0-react";
+import { initializeApp } from "firebase/app";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
+
 
 const AddCourse = () => {
+
   const [formContent, setFormContent] = useState({});
-  const [days, setDays] = useState(7);
+  const [days, setDays] = useState(7 );
 
   const [currentDay, setCurrentDay] = useState(1);
 
@@ -73,7 +81,7 @@ const AddCourse = () => {
   const handleDaysData = (index, e) => {
     const value = e.target.value;
     const name = e.target.name;
-
+    console.log(name,value.split(" ").length)
     setDaysContent((previousVal) => {
       return {
         ...previousVal,
@@ -93,9 +101,152 @@ const AddCourse = () => {
     });
   };
 
+
+  // Sathvik Added
+  
+  const carouselContainerRef = useRef(null);
+
+  const handleClick=(string)=>{
+    const carouselContainer = carouselContainerRef.current;
+    const daySectionWidth = carouselContainer.offsetWidth / daysArr.length;
+    if (string === "next" && currentDay < daysArr.length) {
+      setCurrentDay((previousVal) => previousVal + 1);
+      // resize the carousel container according to the screen size
+      carouselContainer.scrollBy(daySectionWidth, 0);
+      if (currentDay === daysArr.length - 1) {
+        carouselContainer.scrollBy(0, 0);
+      }
+    } 
+    else if(string === "prev" && currentDay > 1){
+      setCurrentDay((previousVal) => previousVal - 1);
+      carouselContainer.scrollBy(-daySectionWidth, 0);
+    }
+  }
+
+  const hiddenFileInput = React.useRef(null);
+  // Create an list which stores the file names of the uploaded files
+  // Save the filename and the day it is getting uploaded to in an array
+  const [file,setFile]=useState({name:""});
+  const [activeIndex,setActiveIndex]=useState(-1);
+  const handleUpload=(index,event)=>{
+    console.log(index);
+    setActiveIndex(index);
+    hiddenFileInput.current.click();
+    window.removeEventListener("focus",handleFocusBack);
+  }
+
+  const handleFocusBack=()=>{
+    setActiveIndex(activeIndex);
+    
+    window.removeEventListener("focus",handleFocusBack);
+  }
+
+  const handleChange = event => {
+    if(!event.target.files[0]){
+      window.removeEventListener("focus",handleFocusBack);
+      return
+    }
+    else{
+      setFile(event.target.files[0]);
+      console.log(file);
+      handleFileUpload();
+    }
+  };
+
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxyKGSMzIqNx_w7IYh4poRXn02N5yf4Wk",
+    authDomain: "ekatraplatform.firebaseapp.com",
+    projectId: "ekatraplatform",
+    storageBucket: "ekatraplatform.appspot.com",
+    messagingSenderId: "1015861767798",
+    appId: "1:1015861767798:web:fd3565f9c3d3865541f957",
+    measurementId: "G-TMXY1G6QL5"
+  };
+  const fileTypes=[ ".pdf",".mp3",".jpg",".jpeg",".png",".gif",".mp4",".mkv",".avi",".mov",".mp3",".wav",".ogg",".aac" ]
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
+
+  const [uploading, setUploading] = useState(false);
+  const [downURL,setDownURL] = useState("");
+  const [progress, setProgress] = useState(0);
+  const uploadFile = (index,event) => {
+    const storageRef = ref(storage, file.name);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    setUploading(true);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        setProgress(progress);
+        // Display the progress bar
+        
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          setDownURL(downloadURL);
+          setUploading(false);
+          console.log(downURL);
+          setDaysContent((previousVal) => {
+            return {
+              ...previousVal,
+              ["day" + currentDay]: previousVal["day" + currentDay].map( 
+                (item, idx) => {
+                  if (idx === index) {
+                    return {
+                      ...item,
+                      media: downloadURL,
+                    };
+                  } else {
+                    return item;
+                  }
+                }
+              ),
+            };
+          });
+        });
+      }
+    )
+  };
+  const [preview,setPreview]=useState(false);
+  const [previewUrl,setPreviewUrl]=useState("")
+  const handlePreview = (index,event) => {
+    // console.log(file)
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload=(event)=>{
+      // console.log(event.target.result);
+      setPreviewUrl(event.target.result);
+      
+    }
+    setPreview(true);
+  };
+
+
+
   const handleAddDay = () => {
     setDays((previouVal) => previouVal + 1);
+    setDaysContent((previousVal) => {
+      return {
+        ...previousVal,
+        ["day" + (days + 1)]: [{ media: "", paragraph: "" }],
   };
+    }
+    );
+  };
+
+  const handleFileUpload =  () => {
+    console.log(currentDay);
+    console.log(daysContent);
+  }
 
   const handleAddParagraph = () => {
     setDaysContent((previousVal) => {
@@ -133,6 +284,7 @@ const AddCourse = () => {
         Language: formContent.language,
         Days: JSON.stringify(daysContent),
         User: user.sub,
+        File:user.file,
       },
     };
 
@@ -161,6 +313,7 @@ const AddCourse = () => {
       console.log(error);
     }
   };
+  const CourseContentContainerRef = useRef(null);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -206,7 +359,14 @@ const AddCourse = () => {
       let daysData;
       typeof courseContent?.fields?.Days === "string" &&
         (daysData = JSON.parse(courseContent?.fields?.Days));
-      // console.log(daysData);
+      let count=0;
+      // find length of JSON object
+      for (var k in daysData) {
+        if (daysData.hasOwnProperty(k)) {
+          ++count;
+        }
+      }
+      setDays(count);
       setDaysContent(daysData);
       setFormContent({
         courseName: courseContent?.fields.CourseName,
@@ -215,7 +375,9 @@ const AddCourse = () => {
         category: courseContent?.fields.Category,
         language: courseContent?.fields.Language,
       });
+
     }
+
   }, []);
 
   return (
@@ -230,7 +392,6 @@ const AddCourse = () => {
                 variant="outlined"
                 required
                 name="courseName"
-                // color="primary"
                 fullWidth
                 margin="normal"
                 onChange={handleForm}
@@ -308,10 +469,12 @@ const AddCourse = () => {
           CourseContentContainer becomes active for each CarouselDay */}
 
           <BottomContainer>
-            <Carousel>
-              <KeyboardArrowLeftSharp />
-              <CarouselDayContainer>
-                {daysArr.map((day) => (
+            <Carousel >
+              <KeyboardArrowLeftSharp onClick={()=>{handleClick("prev")}}/>
+              <CarouselDayContainer ref={carouselContainerRef} >
+                
+                {
+                daysArr.map((day) => (
                   <CarouselDay
                     key={day}
                     onClick={() => handleSingleDay(day)}
@@ -319,33 +482,38 @@ const AddCourse = () => {
                   >
                     Day {day}
                   </CarouselDay>
-                ))}
+                  
+                ))
+                }
               </CarouselDayContainer>
-              <KeyboardArrowRightSharp right />
+              <KeyboardArrowRightSharp right onClick={()=>{ handleClick("next") }}/>
               <ActionButton onClick={handleAddDay}>
                 <AddCircleOutlineOutlined />
                 <ActionButtonTitle>Add Day</ActionButtonTitle>
               </ActionButton>
             </Carousel>
-            <CourseContentContainer>
+            <CourseContentContainer ref={CourseContentContainerRef}>
               {daysContent["day" + currentDay]?.map((dayContent, index) => (
                 <CourseContentWrapper key={index}>
                   <ParagraphContainer>
+                    {/* Add word count for this textfield */}
                     <TextField
                       label="Paragraph"
                       variant="outlined"
                       required
                       color="primary"
-                      value={dayContent.paragraph}
-                      multiline
                       fullWidth
-                      name={`paragraph`}
+                      multiline
                       rows={4}
+                      value={dayContent.paragraph}
                       margin="normal"
-                      onChange={(event) => handleDaysData(index, event)}
+                      name={`paragraph`}
+                      onChange={(event) =>{ handleDaysData(index, event); }}
                     />
+                      
                   </ParagraphContainer>
                   <MediaContainer>
+                                        
                     <TextField
                       label="Media"
                       variant="outlined"
@@ -355,9 +523,67 @@ const AddCourse = () => {
                       value={dayContent.media}
                       margin="normal"
                       name={`media`}
-                      onChange={(event) => handleDaysData(index, event)}
+                      onChange={(event) =>{ handleDaysData(index, event); }}
                     />
-                    <UploadOutlined />
+                  {/* Add a div which takes files to get uploaded */}
+                  <div style={{display:"flex"}}>
+                      <input type="file" name="file" ref= {hiddenFileInput} 
+                      style={{display:"none"}} onChange={handleChange}/>
+                   
+                    <FolderOpenOutlined onClick={(event)=>{handleUpload(index,event)}} onMouseOver={()=>{console.log(index)}} />
+
+                       { 
+                       uploading && activeIndex===index?
+                        <LoadingScreen style={{width:"100%",height:"100%"}} >
+                          <div style={{display:"flex",flexDirection:"column",alignItems:"center", padding:"100px", background: "linear-gradient( 223deg, rgb(115, 216, 206) 0%, rgb(255, 211, 140) 100% )",borderRadius: "50px"}}>
+                          {
+                            progress === 100 ? 
+                              <div>
+                                <div style={{fontSize:"2.5em"}}> Uploaded </div>
+                                <img src={Done} alt="" />
+                              </div>
+                              : 
+                              <div>
+                                <div style={{fontSize:"2em"}}> Uploading... </div>
+                                <progress value={progress} max="100" style={{marginTop:"10px", height:"2.5em",width:"10em"}}/>
+                              </div>
+                          }
+                          </div>
+                        </LoadingScreen> 
+                        :<></>
+                        
+                        }
+                        
+                      <div style={{display:"flex"}}>
+
+                        {
+                          activeIndex === index ? 
+                          <div style={{display:"flex"}}> 
+                            <UploadOutlined onClick={(event)=>{uploadFile(index,event)}}/> 
+                            {
+                              activeIndex === index && fileTypes.includes(file.name.slice(file.name.lastIndexOf(".")))? 
+                              <div> <PreviewOutlined onClick={handlePreview}/> </div> 
+                              : <></>
+                            }
+                            <div> 
+                            {file.name.slice(0,9)+"..."+file.name.slice(file.name.lastIndexOf("."))} 
+                            </div>
+                          </div> 
+                          : <></>
+                        }
+                        {
+                          preview && activeIndex === index && previewUrl?
+                          <Preview style={{display:"flex"}}>
+                            {/* Put the close button to the top right of the preview container */}
+                            <Close style={{position:"absolute",top:"0",right:"0",margin:"10px",cursor:"pointer"}} onClick={()=>{setPreview(false)}}/>
+                            <iframe src={previewUrl} frameborder="0" allowFullScreen  style={{zIndex:"10", width:"80vw", height:"80vh"}}></iframe>
+                         </Preview> :<></>
+                          
+                        }
+                      </div>
+
+                    </div>
+
                   </MediaContainer>
                 </CourseContentWrapper>
               ))}
@@ -481,7 +707,7 @@ const Carousel = styled.div`
     border-radius: 50%;
     margin: 0 20px;
     cursor: pointer;
-  }
+  }CarouselDay
 `;
 
 const CarouselDayContainer = styled.div`
@@ -489,6 +715,7 @@ const CarouselDayContainer = styled.div`
   overflow: scroll;
   scroll-snap-type: x mandatory;
   width: 62%;
+  border: 1px solid #c4c4c4;
   max-width: 65vw;
   &::-webkit-scrollbar {
     display: none;
@@ -583,5 +810,32 @@ const ButtonContainer = styled.div`
   align-items: center;
   justify-content: flex-end;
 `;
+
+// Loading screen for the file upload
+const LoadingScreen = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Preview = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 
 export default AddCourse;
