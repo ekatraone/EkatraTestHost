@@ -27,7 +27,7 @@ const Cohort = () => {
   const getRecords = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohort`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts  `,
         {
           headers: {
             user: user,
@@ -38,11 +38,10 @@ const Cohort = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
       const rows = data.map((record) => ({
-        id: record.id,
+        id: record.id+1,
         name: record.fields.Name,
-        number: "+" + record.fields.Contact,
+        number: record.fields.Contact,
         // Change Status from here
         status: 4,
         channel: record.fields.Channel,

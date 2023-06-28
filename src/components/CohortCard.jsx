@@ -3,16 +3,18 @@ import styled from "styled-components";
 
 const CohortCard = ({
   cohortName,
+  courseName,
   batchName,
   totalUsers,
   activeUsers,
   openQueries,
+  record
 }) => {
   return (
-    <Container>
+    <Container onMouseOver={(e)=>{console.log(record,cohortName)}}>
       <UpperContainer>
         <BatchMonth>{cohortName}</BatchMonth>
-        <BatchNumber>{batchName}</BatchNumber>
+        <BatchNumber>{courseName + batchName}</BatchNumber>
       </UpperContainer>
       <LowerContainer>
         <Button primary>
@@ -45,6 +47,10 @@ const Container = styled.div`
   align-items: center;
   text-align: center;
   border-radius: 0.8rem;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 `;
 const UpperContainer = styled.div``;
 const BatchMonth = styled.h3`

@@ -6,6 +6,7 @@ import {
   FolderOpenOutlined,
   PreviewOutlined,
   Close,
+  ElevatorSharp,
 } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import React, { useEffect, useMemo, useState, useRef, useDebugValue } from "react";
@@ -123,21 +124,17 @@ const AddCourse = () => {
     }
   }
 
-  const hiddenFileInput = React.useRef(null);
   // Create an list which stores the file names of the uploaded files
   // Save the filename and the day it is getting uploaded to in an array
   const [file,setFile]=useState({name:""});
   const [activeIndex,setActiveIndex]=useState(-1);
   const handleUpload=(index,event)=>{
-    console.log(index);
     setActiveIndex(index);
-    hiddenFileInput.current.click();
     window.removeEventListener("focus",handleFocusBack);
   }
 
   const handleFocusBack=()=>{
-    setActiveIndex(activeIndex);
-    
+    setActiveIndex(-1);
     window.removeEventListener("focus",handleFocusBack);
   }
 
@@ -183,8 +180,6 @@ const AddCourse = () => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log("Upload is " + progress + "% done");
         setProgress(progress);
-        // Display the progress bar
-        
       },
       (error) => {
         console.log(error);
@@ -217,29 +212,55 @@ const AddCourse = () => {
     )
   };
   const [preview,setPreview]=useState(false);
+  const [LinkPreview,setLinkPreview]=useState(false);
   const [previewUrl,setPreviewUrl]=useState("")
+  const handleLinkPreview = (index,event) => {
+    console.log(previewUrl)
+  };
+  function isValidLink(str){
+    
+    // Extract JavaSetup8u371.exe from the url
+    var filename = str.substring(str.lastIndexOf('/')+1,str.indexOf('?'));
+    if(fileTypes.includes(filename.slice(filename.lastIndexOf(".")))){
+      setLinkPreview(true)
+      return true;
+    }
+    
+    
+    else{
+      setLinkPreview(false);
+      return false;
+    }
+    
+    
+  }
   const handlePreview = (index,event) => {
     // console.log(file)
+    if (isValidLink(previewUrl)){
+      console.log(previewUrl)
+      setLinkPreview(true);
+      return;
+    }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload=(event)=>{
-      // console.log(event.target.result);
       setPreviewUrl(event.target.result);
-      
     }
     setPreview(true);
   };
 
-
-
   const handleAddDay = () => {
+    if(days>14){
+      alert("You cannot add more than 15 days");
+      return;
+    }
     setDays((previouVal) => previouVal + 1);
     setDaysContent((previousVal) => {
       return {
         ...previousVal,
         ["day" + (days + 1)]: [{ media: "", paragraph: "" }],
-  };
-    }
+      };
+      }
     );
   };
 
@@ -247,7 +268,7 @@ const AddCourse = () => {
     console.log(currentDay);
     console.log(daysContent);
   }
-
+  const [Para150,setPara150]=useState(false);
   const handleAddParagraph = () => {
     setDaysContent((previousVal) => {
       return {
@@ -259,7 +280,7 @@ const AddCourse = () => {
       };
     });
   };
-
+  const []=useState(0);
   const handleSingleDay = (day) => {
     setCurrentDay(day);
     !daysContent.hasOwnProperty("day" + day) &&
@@ -352,7 +373,12 @@ const AddCourse = () => {
     }
   };
 
-
+  const NoKeyCheck = (event) => {
+    console.log(event.currentTarget.value.split(" ").length)
+    if (event.key !== "backspace" && event.key !== "Delete" && event.currentTarget.value.split(" ").length>=150) {
+      event.preventDefault();
+    }
+  }
 
   useEffect(() => {
     if (id) {
@@ -366,6 +392,7 @@ const AddCourse = () => {
           ++count;
         }
       }
+      console.log(daysData["day1"][0]);
       setDays(count);
       setDaysContent(daysData);
       setFormContent({
@@ -489,7 +516,7 @@ const AddCourse = () => {
               <KeyboardArrowRightSharp right onClick={()=>{ handleClick("next") }}/>
               <ActionButton onClick={handleAddDay}>
                 <AddCircleOutlineOutlined />
-                <ActionButtonTitle>Add Day</ActionButtonTitle>
+                <ActionButtonTitle >Add Day</ActionButtonTitle>
               </ActionButton>
             </Carousel>
             <CourseContentContainer ref={CourseContentContainerRef}>
@@ -508,10 +535,19 @@ const AddCourse = () => {
                       value={dayContent.paragraph}
                       margin="normal"
                       name={`paragraph`}
-                      onChange={(event) =>{ handleDaysData(index, event); }}
+                      onChange={(event) =>{ handleDaysData(index, event); NoKeyCheck(event); }}
+                      onFocus={(event)=>{setActiveIndex(index);window.addEventListener("focus",handleFocusBack);}}
+
                     />
-                      
+                    {
+                      index===activeIndex && dayContent.paragraph.length>0?
+                      <WordCount style={{display:"flex"}}>
+                        <p style={{"color":dayContent.paragraph.split(" ").length>=150?"Red":"Blue"}} onChange={(event)=>{dayContent.paragraph.split(" ").length>=150?setPara150(true):setPara150(false)}}>{dayContent.paragraph.split(" ").length}</p> /150
+                      </WordCount>
+                        :<> </>
+                    }
                   </ParagraphContainer>
+                  
                   <MediaContainer>
                                         
                     <TextField
@@ -527,10 +563,12 @@ const AddCourse = () => {
                     />
                   {/* Add a div which takes files to get uploaded */}
                   <div style={{display:"flex"}}>
-                      <input type="file" name="file" ref= {hiddenFileInput} 
-                      style={{display:"none"}} onChange={handleChange}/>
+                      <input type="file" name="file" id="File"
+                     onChange={handleChange}  style={{appearance: "none", display:"none"}}/>
                    
-                    <FolderOpenOutlined onClick={(event)=>{handleUpload(index,event)}} onMouseOver={()=>{console.log(index)}} />
+                    <label htmlFor="File">
+                    <FolderOpenOutlined onClick={(event)=>{handleUpload(index,event)}}/>
+                    </label>
 
                        { 
                        uploading && activeIndex===index?
@@ -557,7 +595,7 @@ const AddCourse = () => {
                       <div style={{display:"flex"}}>
 
                         {
-                          activeIndex === index ? 
+                          activeIndex === index  && file.name? 
                           <div style={{display:"flex"}}> 
                             <UploadOutlined onClick={(event)=>{uploadFile(index,event)}}/> 
                             {
@@ -571,6 +609,23 @@ const AddCourse = () => {
                           </div> 
                           : <></>
                         }
+                          <div>
+                            {
+                            dayContent.media ?
+                            <>
+                              <PreviewOutlined onMouseOver={()=>{setPreviewUrl(dayContent.media)}} onClick={()=>{isValidLink(dayContent.media)}}></PreviewOutlined>
+                            </>
+                            :<></>
+                            }
+                            {
+                              LinkPreview && previewUrl?
+                              <Preview style={{display:"flex"}}>
+                                {/* Put the close button to the top right of the preview container */}
+                                <Close style={{position:"absolute",top:"0",right:"0",margin:"10px",cursor:"pointer"}} onClick={()=>{setLinkPreview(false)}}/>
+                                <iframe src={previewUrl} frameborder="0" allowFullScreen  style={{zIndex:"10", width:"80vw", height:"80vh"}}></iframe>
+                              </Preview> :<></>
+                            }
+                          </div>
                         {
                           preview && activeIndex === index && previewUrl?
                           <Preview style={{display:"flex"}}>
@@ -762,7 +817,12 @@ const ActionButton = styled.div`
   }
 `;
 
-const ActionButtonTitle = styled.span``;
+const ActionButtonTitle = styled.span`
+  -webkit-user-select: none; /* Safari */        
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+/Edge */
+user-select: none; /* Standard */
+`;
 const CourseContentContainer = styled.div`
   width: 100%;
   height: 250px;
@@ -784,10 +844,28 @@ const CourseContentWrapper = styled.div`
   flex: 1;
   height: max-content;
 `;
-
+const WordCount = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  text-align: right;
+  z-index: 100;
+  color: #545353;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+`;
 const ParagraphContainer = styled.div`
+position: relative;
+  display:flex;
   flex: 1;
   margin-right: 6rem;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+ 
 `;
 const MediaContainer = styled.div`
   flex: 1;
@@ -836,6 +914,7 @@ const Preview = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 
 
 export default AddCourse;

@@ -44,7 +44,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       e.target.value = "";
       return false;
     }
-
+    
     reader.readAsBinaryString(e.target.files[0]);
     reader.onload = (e) => {
       const text = e.target.result;
@@ -58,6 +58,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
         let rowObject = XLSX.utils.sheet_to_row_object_array(
           workbook.Sheets[sheet]
         );
+        console.log(rowObject)
         if (
           rowObject[0].id &&
           rowObject[0].name &&
@@ -68,6 +69,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
             (item, index, self) =>
               index === self.findIndex((t) => t.number === item.number)
           );
+          console.log(uniqueRows)
           setCsvData(uniqueRows);
         } else {
           alert("Please upload the file provided in the sample format");
@@ -184,11 +186,6 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
   }, []);
 
   useEffect(() => {
-    // setMonthsCount(
-    //   // JSON.parse(window.localStorage.getItem("monthsCount")) || monthsCount
-    //   JSON.parse(window.localStorage.getItem("monthsCount")) ? JSON.parse(window.localStorage.getItem("monthsCount")) :  monthsCount
-    // );
-
     window.localStorage.getItem("monthsCount")
       ? setMonthsCount(JSON.parse(window.localStorage.getItem("monthsCount")))
       : setMonthsCount(monthsCount);
@@ -245,9 +242,9 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
                 Upload CSV
               </ButtonTitle>
             </CustomButton>
-            {/* {
+            {
               csvFileName && <div style={{"position":"absolute","top":"40px","right":"50px"}} >{csvFileName}</div>
-            } */}
+            }
           </ButtonContainer>
         )}
         {isHavingOneButton && (

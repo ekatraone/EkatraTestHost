@@ -31,19 +31,29 @@ const Cohorts = () => {
 
       const cohortBatches = await response?.json();
       console.log(cohortBatches);
+      const batches = {};
       const counts = {};
-
+      const data={};
       // Get the count of total students in a particular Batch
       for (const element of cohortBatches) {
         if (!counts[element.fields.CohortName]) {
           counts[element.fields.CohortName] = {};
+          data[element.fields.CohortName] = {};
         }
         if (!counts[element.fields.CohortName][element.fields.BatchName]) {
           counts[element.fields.CohortName][element.fields.BatchName] = 0;
+          data[element.fields.CohortName][element.fields.BatchName] = [];
         }
         counts[element.fields.CohortName][element.fields.BatchName] += 1;
+        if(!data[element.fields.CohortName][element.fields.BatchName].includes(element.fields.Name)){
+          const user={}
+          user.name=element.fields.Name
+          user.number=element.fields.Contact
+          user.channel=element.fields.Channel
+          data[element.fields.CohortName][element.fields.BatchName].push(user)
+        }
       }
-
+      console.log(data)
       const months = Object.keys(counts);
       const monthsToFormat = months.map((month) => ({
         month: month,
@@ -74,7 +84,7 @@ const Cohorts = () => {
           let monthB = new Date(`01 ${b.month.split("-")[0]} 2000`).getTime();
           return monthA - monthB;
         });
-
+        console.log(formattedResult)
       setRecords(formattedResult);
     } catch (error) {
       console.log(error);
@@ -96,10 +106,10 @@ const Cohorts = () => {
           <Link
             style={{ color: "inherit" }}
             to={{
-              pathname: `/cohorts/cohort/${index}`,
+              pathname: `/cohorts/cohort/${index+1}`,
               state: {
                 data: JSON.stringify({
-                  batch: `Batch + ${index + 1}`,
+                  batch: `Batch ${index + 1}`,
                   month: record.month,
                   user: user.sub,
                 }),
@@ -109,10 +119,12 @@ const Cohorts = () => {
           >
             <CohortCard
               cohortName={record.month}
-              batchName={`Batch + ${index + 1}`}
+              courseName={record.Course}
+              batchName={`Batch ${index + 1}`}
               totalUsers={batch[Object.keys(batch)[0]]}
               activeUsers={batch[Object.keys(batch)[0]]}
               openQueries="20"
+              record={data}
             />
           </Link>
         ))

@@ -42,23 +42,23 @@ function App() {
         ) : isLoading ? (
           <Loading />
         ) : (
-          // <LandingPage2 />
-          <Container>
-            <Sidebar />
-            <Section>
-              <Navbar />
-              {/* Pages */}
-              {/* <Route exact path="/" component={Home} /> */}
+          <LandingPage2 />
+        //   <Container>
+        //   <Sidebar />
+        //   <Section>
+        //     <Navbar />
+        //     {/* Pages */}
+        //     <Route exact path="/" component={Home} />
 
-              <Route path="/courses/addcourse" component={AddCourse} />
-              <Route exact path="/courses" component={Courses} />
-              <Route path="/courses/course/:id" component={AddCourse} />
+        //     <Route path="/courses/addcourse" component={AddCourse} />
+        //     <Route exact path="/courses" component={Courses} />
+        //     <Route path="/courses/course/:id" component={AddCourse} />
 
-              {/* <Route path="/cohorts/cohort/:id" component={Cohort} />
-              <Route path="/cohorts/addcohort" component={AddCohort} />
-              <Route exact path="/cohorts" component={Cohorts} /> */}
-            </Section>
-          </Container>
+        //     <Route path="/cohorts/cohort/:id" component={Cohort} />
+        //     <Route path="/cohorts/addcohort" component={AddCohort} />
+        //     <Route exact path="/cohorts" component={Cohorts} />
+        //   </Section>
+        // </Container>
         )}
       </Switch>
     </Router>
