@@ -7,7 +7,7 @@ import CohortCard from "../components/CohortCard";
 
 const Cohorts = () => {
   const [records, setRecords] = useState([]);
-
+  const[data, setData]=useState({})
   const { user } = useAuth0();
 
   // DONE, send user sub
@@ -31,9 +31,8 @@ const Cohorts = () => {
 
       const cohortBatches = await response?.json();
       console.log(cohortBatches);
-      const batches = {};
       const counts = {};
-      const data={};
+
       // Get the count of total students in a particular Batch
       for (const element of cohortBatches) {
         if (!counts[element.fields.CohortName]) {
@@ -46,14 +45,14 @@ const Cohorts = () => {
         }
         counts[element.fields.CohortName][element.fields.BatchName] += 1;
         if(!data[element.fields.CohortName][element.fields.BatchName].includes(element.fields.Name)){
-          const user={}
-          user.name=element.fields.Name
-          user.number=element.fields.Contact
-          user.channel=element.fields.Channel
-          data[element.fields.CohortName][element.fields.BatchName].push(user)
+          const details={}
+          details.name=element.fields.Name
+          details.number=element.fields.Contact
+          details.channel=element.fields.Channel
+          data[element.fields.CohortName][element.fields.BatchName].push(details)
         }
       }
-      console.log(data)
+      console.log("data:",data)
       const months = Object.keys(counts);
       const monthsToFormat = months.map((month) => ({
         month: month,
@@ -112,6 +111,7 @@ const Cohorts = () => {
                   batch: `Batch ${index + 1}`,
                   month: record.month,
                   user: user.sub,
+                  EnrolledData: data[record.month][`Batch${index + 1}`],
                 }),
               },
             }}
@@ -119,12 +119,10 @@ const Cohorts = () => {
           >
             <CohortCard
               cohortName={record.month}
-              courseName={record.Course}
               batchName={`Batch ${index + 1}`}
               totalUsers={batch[Object.keys(batch)[0]]}
               activeUsers={batch[Object.keys(batch)[0]]}
               openQueries="20"
-              record={data}
             />
           </Link>
         ))

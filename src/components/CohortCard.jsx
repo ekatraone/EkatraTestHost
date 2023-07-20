@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const CohortCard = ({
   cohortName,
-  courseName,
   batchName,
   totalUsers,
   activeUsers,
@@ -11,10 +10,10 @@ const CohortCard = ({
   record
 }) => {
   return (
-    <Container onMouseOver={(e)=>{console.log(record,cohortName)}}>
+    <Container onMouseOver={(e)=>{console.log(cohortName)}}>
       <UpperContainer>
         <BatchMonth>{cohortName}</BatchMonth>
-        <BatchNumber>{courseName + batchName}</BatchNumber>
+        <BatchNumber>{batchName}</BatchNumber>
       </UpperContainer>
       <LowerContainer>
         <Button primary>

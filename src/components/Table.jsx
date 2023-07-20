@@ -9,30 +9,20 @@ import * as XLSX from "xlsx/xlsx.mjs";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 
-const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
+const Table = ({ rows, columns,data, isHavingTwoButtons, isHavingOneButton, isHomePage }) => {
   const { user } = useAuth0();
   const history = useHistory();
-
+  // console.log("data table",data)
   const [csvData, setCsvData] = useState([]);
   const [csvFileName, setCsvFileName] = useState("");
   const [coursesName, setCoursesName] = useState([]);
   const [courseSelected, setCourseSelected] = useState("");
-
   const [monthsCount, setMonthsCount] = useState({
-    Jan: 0,
-    Feb: 0,
-    Mar: 0,
-    Apr: 0,
-    May: 0,
-    Jun: 0,
-    Jul: 0,
-    Aug: 0,
-    Sep: 0,
-    Oct: 0,
-    Nov: 0,
-    Dec: 0,
+    Jan: 0, Feb: 0, Mar: 0, Apr: 0, May: 0, Jun: 0, Jul: 0, Aug: 0, Sep: 0, Oct: 0, Nov: 0, Dec: 0,
   });
-
+  const [SelectedRows, setSelectedRows] = useState([]);
+  console.log('data',data)
+  const [selectMonth,setMonth]=useState("");
   const handleExcelFile = (e) => {
     const reader = new FileReader();
     let fileName = e.target.files[0].name;
@@ -44,7 +34,7 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       e.target.value = "";
       return false;
     }
-    
+
     reader.readAsBinaryString(e.target.files[0]);
     reader.onload = (e) => {
       const text = e.target.result;
@@ -79,6 +69,36 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
       });
     };
   };
+
+    if(isHomePage){
+      columns = [
+        { field: "id", headerName: "ID", width: 70 },
+        { field: "name", headerName: "Name", width:250  },
+        { field: "number", headerName: "Contact", width: 130 },
+        { field: "channel", headerName: "Channel", width: 130 },
+        { field: "Batch", headerName: "Batch", width: 130 },
+        { field: "Cohort", headerName: "Cohort", width: 130 },
+        { field: "Course", headerName: "Course", width: 130 },
+    ];
+      rows = [
+        {id:1,channel :"WhatsApp", name: "It's good!", number: "917559331576", Batch: "Batch1", Cohort: "Jan-to-Feb"},
+      ];
+    }
+  
+  const handleRowSelection = (e) => {
+    console.log(e.target.value);
+    let selectedRow = data[selectMonth][e.target.value];
+
+    selectedRow.map((item,index)=>{
+      item.id=index+1;
+      item.Batch=e.target.value;
+      item.Cohort=selectMonth;
+      item.Course=item.course;
+    })
+    console.log("98",selectedRow)
+    setSelectedRows(selectedRow);
+  };
+
 
   const handleDownloadExcel = () => {
     const downloadableData = rows.map((row) => ({
@@ -195,6 +215,8 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
     window.localStorage.setItem("monthsCount", JSON.stringify(monthsCount));
   }, [monthsCount]);
 
+ 
+
   return (
     <Container
       isHavingTwoButtons={{ main: [isHavingTwoButtons, isHavingOneButton] }}
@@ -257,12 +279,37 @@ const Table = ({ rows, columns, isHavingTwoButtons, isHavingOneButton }) => {
             </CustomButton>
           </ButtonContainer>
         )}
+        {isHomePage && (
+          <>
+          <div style={{display:"flex"}}>
+          <div >
+            <Select onChange={(e)=>{setMonth(e.target.value);}}>
+              <Option value="-1"> Select any one</Option>
+            {
+              data&&Object.keys(data).map((month,index)=>(
+                <Option value={month} key={index}>{month}</Option>
+              ))
+            }
+            </Select>
+          </div>
+          <div style={{marginLeft:"10px"}}>
+          <Select onChange={(e)=>{handleRowSelection(e)}}>
+            <Option value="-1"> Select any one</Option>
+            {
+              data[selectMonth] && Object.keys(data[selectMonth]).map((info,index)=>{
+                return <Option value={info} key={index}>{info}</Option>
+              })
+            }
+            </Select>
+          </div>
+          </div>
+         </>
+        )}
       </TableHeadingContainer>
       <DataGrid
-        rows={isHavingTwoButtons ? csvData : rows}
+        rows={isHavingTwoButtons ? csvData : isHomePage?SelectedRows:rows}
         columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
+        pageSize={10}
         disableSelectionOnClick
         autoHeight
         autoPageSize
@@ -366,7 +413,8 @@ const Select = styled.select`
   border-radius: 5px;
 `;
 const Option = styled.option`
-  /* color:#C4C4C4; */
+  // color:#C4C4C4; 
+
 `;
 
 export default Table;

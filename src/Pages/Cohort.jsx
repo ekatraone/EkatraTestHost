@@ -6,7 +6,8 @@ import { useHistory, useLocation } from "react-router-dom";
 
 const Cohort = () => {
   const location = useLocation();
-  const { batch, month, user } = JSON.parse(location.state?.data);
+  const { batch, month, user,EnrolledData } = JSON.parse(location.state?.data);
+  console.log("dataEnrolled",EnrolledData)
   const [records, setRecords] = useState([]);
 
   const history = useHistory();
@@ -25,34 +26,18 @@ const Cohort = () => {
 
   //DONE
   const getRecords = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts  `,
-        {
-          headers: {
-            user: user,
-            month,
-            batch,
-          },
-          mode: "cors",
-        }
-      );
-      const data = await response.json();
-      const rows = data.map((record) => ({
-        id: record.id+1,
-        name: record.fields.Name,
-        number: record.fields.Contact,
-        // Change Status from here
-        status: 4,
-        channel: record.fields.Channel,
-      }));
-      setRecords(rows);
-    } catch (error) {
-      setRecords([]);
-      throw new Error("Something went wrong");
-    }
+    const data = EnrolledData;
+    const rows = data.map((record,index) => ({
+      id: index+1,
+      name: record.name,  
+      number: record.number,
+      // Change Status from here
+      status: 4,
+      channel: record.channel,
+    }));
+    setRecords(rows);
   };
-
+  console.log("records",records)
   useEffect(() => {
     getRecords();
   }, []);

@@ -2,102 +2,109 @@ import React from "react";
 import styled from "styled-components";
 import Card from "../components/Card";
 import Table from "../components/Table";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect, useState } from "react";
 
 const Home = () => {
+  const [records, setRecords] = useState([]);
+  const[data, setData]=useState({})
+  const { user } = useAuth0();
 
-  const columns = [
-    { field: "name", headerName: "Name", minWidth: 250, maxWidth: 350 },
-    {
-      field: "modules",
-      headerName: "Number Of Modules",
-      minWidth: 200,
-      maxWidth: 350,
-    },
-    { field: "tests", headerName: "Test Taken", minWidth: 200, maxWidth: 350 },
-    {
-      field: "avgScore",
-      headerName: "Average Score",
-      minWidth: 250,
-      maxWidth: 350,
-    },
-    { field: "channel", headerName: "Channel", minWidth: 250, maxWidth: 350 },
-  ];
+  // DONE, send user sub
+  const getRecords = async () => {
+    try {
+      const response =
+        user &&
+        await fetch(
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/cohorts/getCohorts`,
+          {
+            headers: {
+              user: user.sub,
+            },
+            mode: "cors",
+          }
+        );
 
-  const rows = [
-    {
-      id: 1,
-      name: "Jon",
-      modules: 4,
-      tests: 3,
-      avgScore: 89,
-      channel: "WhatsApp",
-    },
-    {
-      id: 2,
-      name: "Cersei",
-      modules: 4,
-      tests: 3,
-      avgScore: 79,
-      channel: "WhatsApp",
-    },
-    {
-      id: 3,
-      name: "Jaime",
-      modules: 4,
-      tests: 3,
-      avgScore: 59,
-      channel: "WhatsApp",
-    },
-    {
-      id: 4,
-      name: "Arya",
-      modules: 4,
-      tests: 3,
-      avgScore: 69,
-      channel: "WhatsApp",
-    },
-    {
-      id: 5,
-      name: "Daenerys",
-      modules: 4,
-      tests: 3,
-      avgScore: 81,
-      channel: "WhatsApp",
-    },
-    {
-      id: 6,
-      name: "Jammy",
-      modules: 4,
-      tests: 3,
-      avgScore: 82,
-      channel: "WhatsApp",
-    },
-    {
-      id: 7,
-      name: "Ferrara",
-      modules: 4,
-      tests: 3,
-      avgScore: 80,
-      channel: "WhatsApp",
-    },
-    {
-      id: 8,
-      name: "Rossini",
-      modules: 4,
-      tests: 3,
-      avgScore: 57,
-      channel: "WhatsApp",
-    },
-    {
-      id: 9,
-      name: "Harvey",
-      modules: 4,
-      tests: 3,
-      avgScore: 75,
-      channel: "WhatsApp",
-    },
-  ];
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
 
+      const cohortBatches = await response?.json();
+      console.log(cohortBatches);
+      const counts = {};
+
+      // Get the count of total students in a particular Batch
+      for (const element of cohortBatches) {
+        if (!counts[element.fields.CohortName]) {
+          counts[element.fields.CohortName] = {};
+          data[element.fields.CohortName] = {};
+        }
+        if (!counts[element.fields.CohortName][element.fields.BatchName]) {
+          counts[element.fields.CohortName][element.fields.BatchName] = 0;
+          data[element.fields.CohortName][element.fields.BatchName] = [];
+        }
+        counts[element.fields.CohortName][element.fields.BatchName] += 1;
+        if(!data[element.fields.CohortName][element.fields.BatchName].includes(element.fields.Name)){
+          const details={}
+          details.name=element.fields.Name
+          details.number=element.fields.Contact
+          details.channel=element.fields.Channel
+          details.batch=element.fields.BatchName
+          details.cohort=element.fields.CohortName
+          details.course=element.fields.Course
+          data[element.fields.CohortName][element.fields.BatchName].push(details)
+        }
+      }
+      console.log("data:",data)
+      const months = Object.keys(counts);
+      const monthsToFormat = months.map((month) => ({
+        month: month,
+        batches: counts[month],
+      }));
+
+      const formattedResult = monthsToFormat
+        .map((item) => {
+          return {
+            month: item.month,
+            batches: Object.keys(item.batches)
+              .map((key) => ({
+                [key]: item.batches[key],
+                //Sort Batches so that the batches are is ascending order of the time they were created
+              }))
+              .sort((a, b) => {
+                let batchA = Object.keys(a)[0];
+                let batchB = Object.keys(b)[0];
+                if (batchA > batchB) return 1;
+                if (batchA < batchB) return -1;
+                return 0;
+              }),
+          };
+        })
+        //Sort the returned array Months from first map function such that earlier batches comes on Top
+        .sort((a, b) => {
+          let monthA = new Date(`01 ${a.month.split("-")[0]} 2000`).getTime();
+          let monthB = new Date(`01 ${b.month.split("-")[0]} 2000`).getTime();
+          return monthA - monthB;
+        });
+        console.log(formattedResult)
+      setRecords(formattedResult);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getRecords();
+  }, []);
+
+  const columns = [];
+
+  const rows = [];
+  
+
+  useEffect(() => {
+     getRecords();
+  }, []);
   return (
     <Container>
       <CardContainer>
@@ -133,10 +140,8 @@ const Home = () => {
           img="/images/Card4.svg"
         />
       </CardContainer>
-      <Table 
-        rows={rows}
-        columns = {columns}
-      />
+
+      <Table isHomePage columns={columns} rows={rows} data = {data}/>
     </Container>
   );
 };
